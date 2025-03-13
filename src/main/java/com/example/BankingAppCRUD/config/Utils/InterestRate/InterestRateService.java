@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
         public Mono<Double> getInterestRate() {
             return webClient.get()
                     .uri("/interestrate?country=United Kingdom")
-                    .header(HttpHeaders.AUTHORIZATION, "FxOGpCD4xSJRLo72DsIPTw==rFRpJtGqAdDrpsXm") // Use "X-Api-Key" if required
+                    .header(HttpHeaders.AUTHORIZATION, String.valueOf(BankRateAPIKey.UK_KEY)) // Use "X-Api-Key" if required
                     .retrieve()
                     .bodyToMono(InterestRateResponse.class)  // Convert JSON to Java object
                     .flatMap(response -> {
