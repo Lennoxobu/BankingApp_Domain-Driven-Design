@@ -33,4 +33,4 @@ build/
 .vscode/
 
 #### Files  for Git to ignore #####
-./src/main/java/com/example/BankingAppCRUD/config/Utils/InterestRate/BankRateAPIKey.java
+/src/main/java/com/example/BankingAppCRUD/config/Utils/InterestRate/BankRateAPIKey.java
