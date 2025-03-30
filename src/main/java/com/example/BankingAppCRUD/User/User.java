@@ -9,15 +9,13 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Table(name="_User")
 @Builder
 public class User {
 
-
-    @NonNull
     private String firstName;
-    @NonNull
+
     private String lastName;
 
     @OneToOne()
@@ -28,6 +26,10 @@ public class User {
     @GeneratedValue
     @Id 
     private Long Id;
+
+
+
+
 
 
 

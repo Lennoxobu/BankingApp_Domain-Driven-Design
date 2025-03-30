@@ -12,14 +12,14 @@ public class AccountRequest {
     private String firstName;
     @NonNull
     private String lastName;
-    @NonNull
+
     private double balance;
 
     @NonNull
     private String accountNumber;
     @NonNull
     private String NI;
-    @NonNull
+
     private double rate;
 
     private int debitCardNo;

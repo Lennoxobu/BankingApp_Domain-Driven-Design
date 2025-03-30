@@ -1,13 +1,18 @@
 package com.example.BankingAppCRUD.Account;
 
+import com.example.BankingAppCRUD.config.Beans.NumberGeneratorBean;
 import com.example.BankingAppCRUD.config.Utils.InterestRate.InterestRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
+@Transactional
 public class SavingAccountService implements AccountService<SavingAccount> {
 
     @Autowired
@@ -17,10 +22,15 @@ public class SavingAccountService implements AccountService<SavingAccount> {
     private final InterestRateService interestRateService;
 
 
+    private final NumberGeneratorBean numberGeneratorBean;
+
+
+
     @Autowired
-    SavingAccountService (SavingAccountRepository savingAccountRepository , InterestRateService interestRateService) {
+    SavingAccountService (SavingAccountRepository savingAccountRepository , InterestRateService interestRateService , NumberGeneratorBean numberGeneratorBean) {
         this.savingAccountRepository = savingAccountRepository;
         this.interestRateService = interestRateService;
+        this.numberGeneratorBean = numberGeneratorBean;
     }
 
 
@@ -38,7 +48,30 @@ public class SavingAccountService implements AccountService<SavingAccount> {
     @Override
     public SavingAccount createAccount(AccountRequest account ) {
 
-        return null;
+
+        // SSH needs to  called here
+        // debitCardNo needs to be  called  here
+        // debitCardPin needs to be   called here
+
+        account.setAccountNumber(this.numberGeneratorBean.generateAccountNumber());
+        account.setSafetyID(this.numberGeneratorBean.generateDebitCardNo());
+        account.setSafetyKey(this.numberGeneratorBean.generateSafetyKey(account.getAccountNumber()));
+        account.setRate(1); // This should call generateRate() but looking for a way to get past the cyclic dependencies
+
+
+
+        SavingAccount savingAccount = SavingAccount.builder()
+                .firstName(account.getFirstName())
+                .lastName(account.getLastName())
+                .accountNumber(account.getAccountNumber())
+                .NI(account.getNI())
+                .rate(account.getRate())
+                .safetyID(account.getSafetyID())
+                .safetyKey(account.getSafetyKey())
+                .balance(account.getBalance())
+                .build();
+
+        return this.savingAccountRepository.save(savingAccount);
     }
 
 

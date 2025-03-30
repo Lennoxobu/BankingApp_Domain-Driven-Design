@@ -7,6 +7,7 @@ import lombok.*;
 @Setter
 @Table(name= "_CheckingAccount")
 @ToString
+
 public class CheckingAccount extends Account {
 
     private int debitCardNo;

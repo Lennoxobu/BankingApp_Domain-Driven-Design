@@ -62,15 +62,16 @@ public class UserService {
     }
 
 
-    public boolean createCheckingAccount (AccountRequest checkingAccountRequest, Long Id) {
+    public Account  createCheckingAccount (AccountRequest checkingAccountRequest, Long Id) {
 
-
+        return this.checkingAccountService.createAccount(checkingAccountRequest);
 
 
     }
 
-    public boolean createSavingAccount (AccountRequest savingAccountRequest) {
+    public Account  createSavingAccount (AccountRequest savingAccountRequest) {
 
+        return this.savingAccountService.createAccount(savingAccountRequest);
     }
 
 

@@ -1,28 +1,34 @@
 package com.example.BankingAppCRUD.Account;
 
+import com.example.BankingAppCRUD.config.Beans.NumberGeneratorBean;
 import com.example.BankingAppCRUD.config.Utils.InterestRate.InterestRateService;
 import io.netty.channel.unix.Errors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class CheckingAccountService implements AccountService<CheckingAccount> {
 
-    final  CheckingAccountRepository checkingAccountRepository;
-    final InterestRateService interestRateService;
+    private final  CheckingAccountRepository checkingAccountRepository;
+   private  final InterestRateService interestRateService;
+
+   private final NumberGeneratorBean numberGeneratorBean;
 
 
     @Autowired
 
-    CheckingAccountService (InterestRateService interestRateService,  CheckingAccountRepository checkingAccountRepository ) {
+    CheckingAccountService (InterestRateService interestRateService,  CheckingAccountRepository checkingAccountRepository, NumberGeneratorBean numberGeneratorBean ) {
 
         this.checkingAccountRepository = checkingAccountRepository;
         this.interestRateService = interestRateService;
+        this.numberGeneratorBean = numberGeneratorBean;
     }
 
 
@@ -44,10 +50,10 @@ public class CheckingAccountService implements AccountService<CheckingAccount> {
         // debitCardNo needs to be  called  here
         // debitCardPin needs to be   called here
 
-        account.setAccountNumber(generateAccountNumber());
-        account.setDebitCardNo(generateDebitCardNo());
-        account.setDebitCardPin(generateDebitCardPin());
-        account.setRate(generateRate());
+        account.setAccountNumber(this.numberGeneratorBean.generateAccountNumber());
+        account.setDebitCardNo(this.numberGeneratorBean.generateDebitCardNo());
+        account.setDebitCardPin(this.numberGeneratorBean.generateDebitCardPin());
+        account.setRate(1); // This should call generateRate() but looking for a way to get past the cyclic dependencies
 
 
         CheckingAccount checkingAccount = CheckingAccount.builder()
@@ -55,7 +61,7 @@ public class CheckingAccountService implements AccountService<CheckingAccount> {
                 .lastName(account.getLastName())
                 .accountNumber(account.getAccountNumber())
                 .NI(account.getNI())
-                .rate(generateRate())
+                .rate(account.getRate())
                 .rate(account.getRate())
                 .balance(account.getBalance())
                 .debitCardNo(account.getDebitCardNo())
@@ -100,7 +106,7 @@ public class CheckingAccountService implements AccountService<CheckingAccount> {
     public void setRate (Long Id  , double value) {
 
 
-        this.checkingAccountRepository.getReferenceById(Id).setRate(generateRate() + value);
+        this.checkingAccountRepository.getReferenceById(Id).setRate( getRate(Id) + value);
     }
 
     public int updateByFirstName  (String value , long Id ) {
@@ -110,38 +116,11 @@ public class CheckingAccountService implements AccountService<CheckingAccount> {
     }
 
 
-    //Generators , Used to initialise account information
-
-   private  double generateRate() {
-
-        try {
-            return this.interestRateService.getInterestRate().block() + baseRate.rate;
-        } catch (NullPointerException Ex ) {
-            System.out.println(Ex.getMessage());
-            return baseRate.rate;
-
-        }
-
-
-   }
-
-   private int generateDebitCardPin () {
-
-        return (int)(Math.random() * Math.pow(10,4));
-    }
-
-    private int generateDebitCardNo () {
-        return (int)(Math.random() * Math.pow(10,12));
+    public int updateByLastName (String value , long Id ) {
+        return this.checkingAccountRepository.updateByLastName(value , Id);
     }
 
 
-    private String generateAccountNumber () {
-        String uuid = UUID.randomUUID().toString().replaceAll("[^0-9]", "");
-
-        return uuid.substring(0, 12);
-
-
-    }
 
 
     // Normal Banking Operations as per Account Service

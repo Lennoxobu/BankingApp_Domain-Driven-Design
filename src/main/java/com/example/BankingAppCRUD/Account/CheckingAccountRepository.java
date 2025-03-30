@@ -10,23 +10,21 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
+@Transactional(readOnly = true)
 public interface CheckingAccountRepository extends JpaRepository<CheckingAccount , Long> {
 
     @Modifying
-    @Transactional
     @Query(value = "UPDATE _CheckingAccount SET firstName = :keyword WHERE id = :id",
             nativeQuery = true)
     int updateByFirstName (@Param("keyword") String value , @Param("id") long id );
 
     @Modifying
-    @Transactional
     @Query(value = "UPDATE _CheckingAccount SET lastName= :keyword WHERE id = :id",
                     nativeQuery = true)
     int updateByLastName (@Param("keyword") String value, @Param("id") long id);
 
 
     @Modifying
-    @Transactional
     @Query(value = "UPDATE  _CheckingAccount SET balance = :Num WHERE id = :id",
             nativeQuery = true)
     int updateByBalance (@Param("Num") double Num , @Param("id") double id);

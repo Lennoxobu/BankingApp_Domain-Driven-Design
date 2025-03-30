@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface AccountService <T extends Account>  {
+public interface AccountService <T extends Account >  {
 
     public Page<T> getAllAccounts (Pageable pageable);
 
