@@ -1,7 +1,8 @@
-package com.example.BankingAppCRUD.Account;
+package com.example.BankingAppCRUD.Account.Controller;
 
 
-import lombok.Builder;
+import com.example.BankingAppCRUD.Account.Model.SavingAccount;
+import com.example.BankingAppCRUD.Account.Service.SavingAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class SavingAccountController {
 
     @Autowired
-    SavingAccountService  savingAccountService;
+    SavingAccountService savingAccountService;
 
     @Autowired
     SavingAccountController (SavingAccountService savingAccountService) {

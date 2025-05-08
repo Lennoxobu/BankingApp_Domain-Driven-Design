@@ -1,9 +1,8 @@
-package com.example.BankingAppCRUD.Account;
+package com.example.BankingAppCRUD.Account.Model;
 
 
 import lombok.Data;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 @Data
 public class AccountRequest {

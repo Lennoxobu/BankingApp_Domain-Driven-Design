@@ -1,4 +1,4 @@
-package com.example.BankingAppCRUD.config.Utils.InterestRate;
+package com.example.BankingAppCRUD.Config.Utils.InterestRate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

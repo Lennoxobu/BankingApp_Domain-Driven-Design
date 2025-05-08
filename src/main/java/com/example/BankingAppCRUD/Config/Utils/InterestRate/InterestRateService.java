@@ -1,4 +1,4 @@
-package com.example.BankingAppCRUD.config.Utils.InterestRate;
+package com.example.BankingAppCRUD.Config.Utils.InterestRate;
 
 
 import org.springframework.stereotype.Service;
@@ -22,12 +22,12 @@ import reactor.core.publisher.Mono;
                     .uri("/interestrate?country=United Kingdom")
                     .header(HttpHeaders.AUTHORIZATION, String.valueOf(BankRateAPIKey.UK_KEY)) // Use "X-Api-Key" if required
                     .retrieve()
-                    .bodyToMono(InterestRateResponse.class)  // Convert JSON to Java object
+                    .bodyToMono(CentralBankRate.class)  // Convert JSON to Java object
                     .flatMap(response -> {
-                        if (response.getCentralBankRates() == null || response.getCentralBankRates().isEmpty()) {
+                        if (response.getRatePct() == 0 ) {
                             return Mono.empty();  // If no rates are available, return empty Mono
                         }
-                        return Mono.just(response.getCentralBankRates().get(0).getRatePct());
+                        return Mono.just(response.getRatePct());
                     })
                     .defaultIfEmpty(0.0) // Default value if API returns an empty list
                     .onErrorResume(WebClientResponseException.class, ex -> {

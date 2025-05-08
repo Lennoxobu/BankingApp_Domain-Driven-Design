@@ -1,4 +1,4 @@
-package com.example.BankingAppCRUD.Account;
+package com.example.BankingAppCRUD.Account.Model;
 
 
 import lombok.Getter;

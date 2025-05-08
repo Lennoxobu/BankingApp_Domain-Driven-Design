@@ -1,4 +1,4 @@
-package com.example.BankingAppCRUD.Account;
+package com.example.BankingAppCRUD.Account.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,14 +8,14 @@ import lombok.*;
 @ToString
 @MappedSuperclass
 @AllArgsConstructor
-public  class Account implements baseRate  {
+public  class Account implements baseRate {
 
-    protected String firstName;
-    protected String lastName;
+
     protected String accountNumber;
     protected String NI;
     protected double rate = baseRate.rate ;
     protected double balance;
+
 
 
     @Id

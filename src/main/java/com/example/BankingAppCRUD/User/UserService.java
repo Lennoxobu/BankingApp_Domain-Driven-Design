@@ -1,8 +1,12 @@
 package com.example.BankingAppCRUD.User;
 
-import com.example.BankingAppCRUD.Account.*;
+import com.example.BankingAppCRUD.Account.Model.Account;
+import com.example.BankingAppCRUD.Account.Model.AccountRequest;
+import com.example.BankingAppCRUD.Account.Model.CheckingAccount;
+import com.example.BankingAppCRUD.Account.Model.SavingAccount;
+import com.example.BankingAppCRUD.Account.Service.CheckingAccountService;
+import com.example.BankingAppCRUD.Account.Service.SavingAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,7 +66,7 @@ public class UserService {
     }
 
 
-    public Account  createCheckingAccount (AccountRequest checkingAccountRequest, Long Id) {
+    public Account createCheckingAccount (AccountRequest checkingAccountRequest, Long Id) {
 
         return this.checkingAccountService.createAccount(checkingAccountRequest);
 
@@ -76,17 +80,38 @@ public class UserService {
 
 
     public boolean deleteCheckingAccount (Long id ) {
-            this.userRepository.getReferenceById(id).setCheckingAccount(null);
 
-            return this.userRepository.getReferenceById(id).getCheckingAccount() == null;
+        CheckingAccount account = this.userRepository.getReferenceById(id).getCheckingAccount();
+
+
+       if  (this.checkingAccountService.deleteAccount(account, account.getId())) {
+           this.userRepository.removeCheckingAccount(id);
+
+       } else { return false; };
+
+       return true;
+
     }
 
 
     public boolean deleteSavingAccount (Long id) {
 
-        this.userRepository.getReferenceById(id).setCheckingAccount(null);
+          SavingAccount account = this.userRepository.getReferenceById(id).getSavingAccount();
 
-        return this.userRepository.getReferenceById(id).getCheckingAccount() == null;
+
+
+          if (this.savingAccountService.deleteAccount(account , account.getId())) {
+              this.userRepository.removeSavingAccount(id);
+
+          } else {
+
+              return false;
+
+          };
+
+
+
+            return true;
     }
 
 

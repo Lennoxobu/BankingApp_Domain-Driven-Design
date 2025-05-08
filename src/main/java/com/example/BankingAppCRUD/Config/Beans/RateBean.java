@@ -1,13 +1,9 @@
-package com.example.BankingAppCRUD.config.Beans;
+package com.example.BankingAppCRUD.Config.Beans;
 
 
-import com.example.BankingAppCRUD.Account.baseRate;
-import com.example.BankingAppCRUD.config.Utils.InterestRate.InterestRateService;
+import com.example.BankingAppCRUD.Account.Model.baseRate;
+import com.example.BankingAppCRUD.Config.Utils.InterestRate.InterestRateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-
-
 
 
 // Cyclic Dependencies Issue

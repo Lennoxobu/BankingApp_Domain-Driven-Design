@@ -1,4 +1,4 @@
-package com.example.BankingAppCRUD.config.Beans;
+package com.example.BankingAppCRUD.Config.Beans;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;

@@ -1,16 +1,14 @@
-package com.example.BankingAppCRUD.Account;
+package com.example.BankingAppCRUD.Account.Service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.BankingAppCRUD.Account.Model.AccountRequest;
+import com.example.BankingAppCRUD.Account.Model.Account;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 
-public interface AccountService <T extends Account >  {
+public interface AccountService <T extends Account>  {
 
     public Page<T> getAllAccounts (Pageable pageable);
 

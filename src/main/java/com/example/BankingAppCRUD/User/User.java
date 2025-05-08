@@ -1,7 +1,7 @@
 package com.example.BankingAppCRUD.User;
 
-import com.example.BankingAppCRUD.Account.CheckingAccount;
-import com.example.BankingAppCRUD.Account.SavingAccount;
+import com.example.BankingAppCRUD.Account.Model.CheckingAccount;
+import com.example.BankingAppCRUD.Account.Model.SavingAccount;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +19,11 @@ public class User {
     private String lastName;
 
     @OneToOne()
+    @JoinColumn(name ="checkingAccountId")
     private CheckingAccount checkingAccount;
+
     @OneToOne()
+    @JoinColumn(name="savingAccountId")
     private SavingAccount savingAccount;
 
     @GeneratedValue

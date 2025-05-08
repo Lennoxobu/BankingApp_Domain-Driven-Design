@@ -1,6 +1,7 @@
-package com.example.BankingAppCRUD.Account;
+package com.example.BankingAppCRUD.Account.Controller;
 
-import lombok.AllArgsConstructor;
+import com.example.BankingAppCRUD.Account.Model.CheckingAccount;
+import com.example.BankingAppCRUD.Account.Service.CheckingAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/CheckingAccount")
 public class CheckingAccountController {
 
-    private  CheckingAccountService  checkingAccountService;
+    private CheckingAccountService checkingAccountService;
 
 
     @Autowired

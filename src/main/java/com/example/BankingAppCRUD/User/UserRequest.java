@@ -1,7 +1,7 @@
 package com.example.BankingAppCRUD.User;
 
-import com.example.BankingAppCRUD.Account.CheckingAccount;
-import com.example.BankingAppCRUD.Account.SavingAccount;
+import com.example.BankingAppCRUD.Account.Model.CheckingAccount;
+import com.example.BankingAppCRUD.Account.Model.SavingAccount;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

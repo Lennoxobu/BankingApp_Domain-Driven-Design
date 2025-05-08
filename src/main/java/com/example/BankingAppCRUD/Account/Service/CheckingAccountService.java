@@ -1,8 +1,10 @@
-package com.example.BankingAppCRUD.Account;
+package com.example.BankingAppCRUD.Account.Service;
 
-import com.example.BankingAppCRUD.config.Beans.NumberGeneratorBean;
-import com.example.BankingAppCRUD.config.Utils.InterestRate.InterestRateService;
-import io.netty.channel.unix.Errors;
+import com.example.BankingAppCRUD.Account.Model.AccountRequest;
+import com.example.BankingAppCRUD.Account.Repository.CheckingAccountRepository;
+import com.example.BankingAppCRUD.Account.Model.CheckingAccount;
+import com.example.BankingAppCRUD.Config.Beans.NumberGeneratorBean;
+import com.example.BankingAppCRUD.Config.Utils.InterestRate.InterestRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -10,13 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Transactional
 public class CheckingAccountService implements AccountService<CheckingAccount> {
 
-    private final  CheckingAccountRepository checkingAccountRepository;
+    private final CheckingAccountRepository checkingAccountRepository;
    private  final InterestRateService interestRateService;
 
    private final NumberGeneratorBean numberGeneratorBean;
@@ -57,11 +58,8 @@ public class CheckingAccountService implements AccountService<CheckingAccount> {
 
 
         CheckingAccount checkingAccount = CheckingAccount.builder()
-                .firstName(account.getFirstName())
-                .lastName(account.getLastName())
                 .accountNumber(account.getAccountNumber())
                 .NI(account.getNI())
-                .rate(account.getRate())
                 .rate(account.getRate())
                 .balance(account.getBalance())
                 .debitCardNo(account.getDebitCardNo())
@@ -109,16 +107,8 @@ public class CheckingAccountService implements AccountService<CheckingAccount> {
         this.checkingAccountRepository.getReferenceById(Id).setRate( getRate(Id) + value);
     }
 
-    public int updateByFirstName  (String value , long Id ) {
-
-        return this.checkingAccountRepository.updateByFirstName(value ,Id);
-
-    }
 
 
-    public int updateByLastName (String value , long Id ) {
-        return this.checkingAccountRepository.updateByLastName(value , Id);
-    }
 
 
 

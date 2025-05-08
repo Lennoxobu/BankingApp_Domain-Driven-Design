@@ -1,14 +1,17 @@
-package com.example.BankingAppCRUD.Account;
+package com.example.BankingAppCRUD.Account.Service;
 
-import com.example.BankingAppCRUD.config.Beans.NumberGeneratorBean;
-import com.example.BankingAppCRUD.config.Utils.InterestRate.InterestRateService;
+import com.example.BankingAppCRUD.Account.Model.AccountRequest;
+import com.example.BankingAppCRUD.Account.Model.SavingAccount;
+import com.example.BankingAppCRUD.Account.Repository.SavingAccountRepository;
+import com.example.BankingAppCRUD.Config.Beans.NumberGeneratorBean;
+import com.example.BankingAppCRUD.Config.Utils.InterestRate.InterestRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.Duration;
 import java.util.Optional;
 
 @Service
@@ -61,8 +64,6 @@ public class SavingAccountService implements AccountService<SavingAccount> {
 
 
         SavingAccount savingAccount = SavingAccount.builder()
-                .firstName(account.getFirstName())
-                .lastName(account.getLastName())
                 .accountNumber(account.getAccountNumber())
                 .NI(account.getNI())
                 .rate(account.getRate())
@@ -81,8 +82,7 @@ public class SavingAccountService implements AccountService<SavingAccount> {
     public boolean  deleteAccount (SavingAccount account , Long ID ) {
         this.savingAccountRepository.deleteById(ID);
 
-        if (!this.savingAccountRepository.existsById(ID))
-            return true;
+        if (!this.savingAccountRepository.existsById(ID))  return true;
 
 
         return false;
@@ -100,21 +100,10 @@ public class SavingAccountService implements AccountService<SavingAccount> {
 
     @Override
     public void setRate(Long Id, double value) {
-        this.savingAccountRepository.getReferenceById(Id).setRate(generateRate());
+        this.savingAccountRepository.getReferenceById(Id).setRate(this.interestRateService.getInterestRate().block(Duration.ofSeconds((long) 0.5)));
     }
 
-    private  double generateRate() {
 
-        try {
-            return this.interestRateService.getInterestRate().block() + baseRate.rate;
-        } catch (NullPointerException Ex ) {
-            System.out.println(Ex.getMessage());
-            return baseRate.rate;
-
-        }
-
-
-    }
 
     // Normal Banking Operations as per Account Service
     @Override
