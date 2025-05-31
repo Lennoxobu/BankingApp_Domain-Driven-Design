@@ -1,6 +1,7 @@
 package com.example.BankingAppCRUD.Account.Controller;
 
 
+import com.example.BankingAppCRUD.Account.Model.AccountRequest;
 import com.example.BankingAppCRUD.Account.Model.SavingAccount;
 import com.example.BankingAppCRUD.Account.Service.SavingAccountService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,6 +41,7 @@ public class SavingAccountController {
         Pageable pageable = PageRequest.of(page, size, sort);
         return this.savingAccountService.getAllAccounts(pageable);
     }
+
 
 
 }

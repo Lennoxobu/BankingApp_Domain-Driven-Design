@@ -1,6 +1,7 @@
 package com.example.BankingAppCRUD.Account.Service;
 
 import com.example.BankingAppCRUD.Account.Model.AccountRequest;
+import com.example.BankingAppCRUD.Account.Model.AccountResponse;
 import com.example.BankingAppCRUD.Account.Repository.CheckingAccountRepository;
 import com.example.BankingAppCRUD.Account.Model.CheckingAccount;
 import com.example.BankingAppCRUD.Config.Beans.NumberGeneratorBean;
@@ -70,11 +71,19 @@ public class CheckingAccountService implements AccountService<CheckingAccount> {
 
     }
 
-    public boolean createAccounts (List<AccountRequest> accounts ) {
+    public int  createAccounts (List<AccountRequest> accounts ) {
+
+
         for (AccountRequest account : accounts) {
             createAccount(account);
         }
-        return true;
+
+
+        return -1;
+
+
+
+
     }
 
 

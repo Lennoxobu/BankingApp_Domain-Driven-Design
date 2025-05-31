@@ -1,5 +1,7 @@
 package com.example.BankingAppCRUD.Account.Controller;
 
+import com.example.BankingAppCRUD.Account.Model.AccountRequest;
+import com.example.BankingAppCRUD.Account.Model.AccountResponse;
 import com.example.BankingAppCRUD.Account.Model.CheckingAccount;
 import com.example.BankingAppCRUD.Account.Service.CheckingAccountService;
 import lombok.RequiredArgsConstructor;
@@ -8,10 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +30,17 @@ public class CheckingAccountController {
     }
 
 
+
+
+    @PostMapping
+    public ResponseEntity<CheckingAccount> createAccount (AccountRequest checkingAccountRequest) {
+        return new ResponseEntity<>(checkingAccountService.createAccount(checkingAccountRequest) , HttpStatus.CREATED);
+    }
+
+
+
+
+
     @GetMapping
     public Page<CheckingAccount> getAllAccounts (
             @RequestParam(defaultValue = "0") int page,
@@ -37,6 +51,22 @@ public class CheckingAccountController {
         Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return this.checkingAccountService.getAllAccounts(pageable);
+    }
+
+
+    @GetMapping
+    public ResponseEntity<Optional<AccountRequest>> getAccount (long Id) {
+
+        return ResponseEntity.ok(checkingAccountService.getAccountById(Id));
+    }
+
+
+
+    @PostMapping
+    public ResponseEntity<AccountResponse> submitAccount (AccountRequest accDTO ) {
+
+
+        checkingAccountService.createAccount(AccountRequest);
     }
 
 
