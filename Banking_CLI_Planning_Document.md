@@ -194,3 +194,13 @@ You should keep the following documents up to date:
 - Design diagrams (optional, for data flow or architecture)
 - User manual (for end users)
 - Dev guide (for future developers)
+
+
+## 12. 🧠  Design Considerations 
+
+| **Feature**         | **CheckingAccount** | **SavingAccount** |
+|---------------------|---------------------|-----------------|
+| Supports overdraft  | Yes    ✅            | No         ❌     |
+| Monthly interest    | No        ❌         | Yes        ✅    |
+ | Minimum balance enforced | Optional            | Yes (Usually) ✅    | 
+|   Monthly maintenace fees | Common    ✅         | Rare  ❌          | 
