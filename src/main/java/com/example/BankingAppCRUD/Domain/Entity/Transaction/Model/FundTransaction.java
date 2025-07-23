@@ -1,14 +1,8 @@
 package com.example.BankingAppCRUD.Domain.Entity.Transaction.Model;
 
 import com.example.BankingAppCRUD.Domain.Entity.Account.Model.Account;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.Date;
 import java.util.UUID;
@@ -17,11 +11,15 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@Builder
 @AllArgsConstructor
 public class FundTransaction {
 
 
+    @ManyToOne
     private UUID  senderID;
+
+    @ManyToOne
     private UUID  receiverID;
     private Date timeStamp;
 

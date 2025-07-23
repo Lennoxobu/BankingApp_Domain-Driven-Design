@@ -2,6 +2,7 @@ package com.example.BankingAppCRUD.Domain.ValueObject;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -24,6 +25,8 @@ public class Name {
     private final  String last;
 
     private final String knownAs;
+
+
 
 
 }

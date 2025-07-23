@@ -3,12 +3,14 @@ package com.example.BankingAppCRUD.Domain.Entity.Account.Model;
 import com.example.BankingAppCRUD.Domain.Entity.Transaction.Model.FundTransaction;
 import com.example.BankingAppCRUD.Domain.ValueObject.AccountInfo;
 import com.example.BankingAppCRUD.Domain.ValueObject.AccountStatus;
+import com.example.BankingAppCRUD.Domain.ValueObject.Money;
 import com.example.BankingAppCRUD.Domain.ValueObject.Rate;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +19,7 @@ import java.util.UUID;
 @ToString
 @MappedSuperclass
 @AllArgsConstructor
+@SuperBuilder
 public abstract class Account {
 
     protected AccountStatus account_status;
@@ -26,8 +29,10 @@ public abstract class Account {
     protected AccountInfo info;
 
 
+    @Embedded
+    protected Money  balance;
 
-    protected List<FundTransaction> account_transactions;
+    protected List<UUID> account_transactions;
 
     @Embedded
     protected Rate rate;

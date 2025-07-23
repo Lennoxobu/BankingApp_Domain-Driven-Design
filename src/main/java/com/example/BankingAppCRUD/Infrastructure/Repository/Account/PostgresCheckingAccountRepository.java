@@ -1,5 +1,6 @@
 package com.example.BankingAppCRUD.Infrastructure.Repository.Account;
 
+import com.example.BankingAppCRUD.Application.Response.Response;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Model.CheckingAccount;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Ports.AccountRepository;
 import com.example.BankingAppCRUD.Domain.ValueObject.Money;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,8 +40,13 @@ public class PostgresCheckingAccountRepository implements AccountRepository<Chec
         return Optional.empty();
     }
 
-    @Override
-    public CheckingAccount deleteAccount(UUID id) {
-        return null;
+
+
+
+    public Optional<List<CheckingAccount>> findByAll  () {
+
+        return Optional.of (this.checkingAccountJPARepository.findAll());
     }
+
+
 }

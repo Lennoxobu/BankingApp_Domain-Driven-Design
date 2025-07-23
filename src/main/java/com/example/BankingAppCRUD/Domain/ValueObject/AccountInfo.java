@@ -14,7 +14,7 @@ import java.util.UUID;
 public class AccountInfo {
 
     private final  String accountNo;
-    private final int sortCode;
+    private final long sortCode;
 
 
 }

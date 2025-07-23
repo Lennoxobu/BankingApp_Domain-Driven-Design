@@ -37,8 +37,5 @@ public class PostgresSavingAccountRepository implements AccountRepository<Saving
         return Optional.empty();
     }
 
-    @Override
-    public SavingAccount deleteAccount(UUID id) {
-        return null;
-    }
+
 }

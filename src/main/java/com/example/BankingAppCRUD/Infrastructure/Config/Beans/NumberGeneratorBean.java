@@ -19,19 +19,24 @@ public class NumberGeneratorBean {
     @Bean
     public int generateDebitCardPin () {
 
-        return (int)(Math.random() * Math.pow(10,4));
+        return 1000 + (int)(Math.random() * Math.random());
     }
 
 
     @Bean
-    public int generateDebitCardNo () {
-        return (int)(Math.random() * Math.pow(10,12));
+    public long generateDebitCardNo () {
+        return (long)(Math.random() * Math.pow(10,12));
     }
 
 
 
     @Bean
-    public int   generateSafetyKey (String accountNumber ) {
+    public long generateSortCodeNo () {return 100000 + (int)(Math.random() * 900000); }
+
+
+
+    @Bean
+    public int  generateSafetyKey (String accountNumber ) {
 
         return Integer.getInteger(UUID.fromString(accountNumber.substring(0, 5)).toString());
 

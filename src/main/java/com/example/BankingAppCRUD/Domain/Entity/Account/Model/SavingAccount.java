@@ -6,6 +6,7 @@ import com.example.BankingAppCRUD.Domain.ValueObject.Money;
 import com.example.BankingAppCRUD.Domain.ValueObject.Rate;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.sql.Timestamp;
 
@@ -13,7 +14,7 @@ import java.sql.Timestamp;
 @Setter
 @Table(name="_SavingAccount")
 @ToString
-@Builder
+@SuperBuilder
 @Entity
 public class SavingAccount extends Account {
 

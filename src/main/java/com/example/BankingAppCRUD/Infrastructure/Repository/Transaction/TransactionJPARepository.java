@@ -6,10 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 
 public interface TransactionJPARepository extends JpaRepository<FundTransaction, UUID> {
+
+
+    List<FundTransaction> findFundTransferByFromAccount(UUID  accountId);
 
 
 }

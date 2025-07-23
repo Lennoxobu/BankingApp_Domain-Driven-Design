@@ -5,24 +5,17 @@ import jakarta.persistence.Embeddable;
 import lombok.Builder;
 import lombok.Data;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 @Data
 @Builder
 @Embeddable
 public class DebitInfo {
 
-    private final int debitCardPin ;
-    private final int debitCardNo;
+    private final String  debitCardPin_hashed ;
+    private final  String debitCardNo_hashed ;
     private final Timestamp expiryDate;
-    private final Timestamp issueDate;
+    private final  Timestamp issueDate;
 
 
-
-    DebitInfo (int debitCardNo, int debitCardPin,Timestamp expiryDate , Timestamp issueDate ) {
-        // Need to add some encryption and hashing here
-        //..............................
-        //...............................
-        //................................
-    }
 }

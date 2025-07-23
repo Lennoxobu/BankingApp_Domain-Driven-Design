@@ -18,7 +18,7 @@ public interface AccountRepository<T extends Account> {
 
     Optional<T> updateByBalance ( Money amount  , UUID id);
 
-    T deleteAccount (UUID id );
+
 
 
 

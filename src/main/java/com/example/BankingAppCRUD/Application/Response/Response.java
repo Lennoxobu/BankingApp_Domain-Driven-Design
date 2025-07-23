@@ -1,10 +1,12 @@
 package com.example.BankingAppCRUD.Application.Response;
 
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class UserResponse {
+@Builder
+public class Response {
 
     private String responseCode;
 

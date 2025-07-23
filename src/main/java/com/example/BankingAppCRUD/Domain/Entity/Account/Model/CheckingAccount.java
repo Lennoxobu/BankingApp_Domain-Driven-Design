@@ -5,12 +5,13 @@ import com.example.BankingAppCRUD.Domain.ValueObject.DebitInfo;
 import com.example.BankingAppCRUD.Domain.ValueObject.Money;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @Table(name= "_CheckingAccount")
 @ToString
-@Builder
+@SuperBuilder
 @Entity
 public class CheckingAccount extends Account {
 
@@ -24,6 +25,9 @@ public class CheckingAccount extends Account {
     private Money overDraftLimit ;
     @Embedded
     private DebitInfo debitCardInfo;
+
+
+
 
 
 }

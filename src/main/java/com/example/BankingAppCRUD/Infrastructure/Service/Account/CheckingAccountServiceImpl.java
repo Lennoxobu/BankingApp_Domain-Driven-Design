@@ -1,84 +1,135 @@
 package com.example.BankingAppCRUD.Infrastructure.Service.Account;
 
-import com.example.BankingAppCRUD.Application.Request.AccountRequest;
+import com.example.BankingAppCRUD.Application.DTOs.AccountDTO;
+import com.example.BankingAppCRUD.Application.DTOs.FundTransactionDTO;
+import com.example.BankingAppCRUD.Application.Mappers.AccountMapper;
+import com.example.BankingAppCRUD.Application.Response.Response;
+import com.example.BankingAppCRUD.Domain.Entity.Account.Model.Account;
+import com.example.BankingAppCRUD.Domain.Entity.Account.Model.SavingAccount;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Ports.AccountService;
+import com.example.BankingAppCRUD.Domain.Entity.Transaction.Model.FundTransaction;
+import com.example.BankingAppCRUD.Domain.Entity.Transaction.Ports.FundTransactionService;
+import com.example.BankingAppCRUD.Domain.ValueObject.AccountStatus;
+import com.example.BankingAppCRUD.Domain.ValueObject.Money;
+import com.example.BankingAppCRUD.Domain.ValueObject.Rate;
 import com.example.BankingAppCRUD.Infrastructure.Repository.Account.CheckingAccountJPARepository;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Model.CheckingAccount;
 import com.example.BankingAppCRUD.Infrastructure.Config.Beans.NumberGeneratorBean;
 import com.example.BankingAppCRUD.Infrastructure.Config.InterestRate.InterestRateService;
+import com.example.BankingAppCRUD.Infrastructure.Repository.Account.SavingAccountJPARepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
 public class CheckingAccountServiceImpl implements AccountService<CheckingAccount> {
 
-    private final CheckingAccountJPARepository checkingAccountJPARepository;
+    private final CheckingAccountJPARepository checkingAccountRepository;
     private  final InterestRateService interestRateService;
     private final NumberGeneratorBean numberGeneratorBean;
+    private final FundTransactionService fundTransactionService;
+    private final SavingAccountJPARepository savingAccountRespository;
+    private final AccountMapper accountMapper;
+
 
 
     @Autowired
-    CheckingAccountServiceImpl(InterestRateService interestRateService, CheckingAccountJPARepository checkingAccountJPARepository, NumberGeneratorBean numberGeneratorBean ) {
+    CheckingAccountServiceImpl(InterestRateService interestRateService, CheckingAccountJPARepository checkingAccountRepository, NumberGeneratorBean numberGeneratorBean, FundTransactionService fundTransactionService,AccountMapper accountMapper , SavingAccountJPARepository savingAccountRespository ) {
 
-        this.checkingAccountJPARepository = checkingAccountJPARepository;
+        this.checkingAccountRepository = checkingAccountRepository;
         this.interestRateService = interestRateService;
         this.numberGeneratorBean = numberGeneratorBean;
-    }
+        this.fundTransactionService = fundTransactionService;
+        this.savingAccountRespository = savingAccountRespository;
+        this.accountMapper = new AccountMapper();
 
 
-    // Checking Account Services Methods
-    @Override
-    public Page<CheckingAccount> getAllAccounts (org.springframework.data.domain.Pageable pageable) {
-        return this.checkingAccountJPARepository.findAll(pageable);
-    }
-
-    @Override
-    public Optional<CheckingAccount> getAccountById(long ID) {
-        return this.checkingAccountJPARepository.findById(ID);
     }
 
     @Override
-    public CheckingAccount createAccount(AccountRequest account ) {
+    public Response deposit (long amount , UUID id ) throws Exception {
 
-        // SSH needs to  called here
-        // debitCardNo needs to be  called  here
-        // debitCardPin needs to be   called here
+        if (amount <= 0)
+            throw new Exception("Deposit must be greater than zero");
 
-        account.setAccountNumber(this.numberGeneratorBean.generateAccountNumber());
-        account.setDebitCardNo(this.numberGeneratorBean.generateDebitCardNo());
-        account.setDebitCardPin(this.numberGeneratorBean.generateDebitCardPin());
-        account.setRate(1); // This should call generateRate() but looking for a way to get past the cyclic dependencies
+        Optional<CheckingAccount> optionalAccount = this.checkingAccountRepository.findById(id);
 
 
-        CheckingAccount checkingAccount = CheckingAccount.builder()
-                .accountNumber(account.getAccountNumber())
-                .NI(account.getNI())
-                .rate(account.getRate())
-                .balance(account.getBalance())
-                .debitCardNo(account.getDebitCardNo())
-                .debitCardPin(account.getDebitCardPin())
-                .build();
-
-        return this.checkingAccountJPARepository.save(checkingAccount);
-
-    }
-
-    public int  createAccounts (List<AccountRequest> accounts ) {
+        if (optionalAccount.isEmpty())
+            return Response.builder().responseCode("404").message("Account not found ").build();
 
 
-        for (AccountRequest account : accounts) {
-            createAccount(account);
+
+
+        CheckingAccount account = optionalAccount.get();
+
+
+
+        if (account.getAccount_status() != AccountStatus.ACTIVE)
+            return Response.builder().responseCode("500").responseCode("Account not active").build();
+
+
+        Money newAmount = Money.builder().amount(account.getBalance().getAmount() + amount).currency("GBP").build();
+
+        account.setBalance(newAmount);
+
+        try {
+
+            List<UUID>  currList = account.getAccount_transactions();
+            currList.add(UUID.fromString(this.fundTransactionService.createTransaction(id, amount).getMessage().toString()));
+
+            account.setAccount_transactions(currList);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
 
-        return -1;
+        this.checkingAccountRepository.save(account);
+        return Response.builder().responseCode("200").message("Success").build();
 
+
+    }
+
+
+    @Override
+    public Response withdraw (long amount , UUID id ) throws Exception {
+
+          return checkingAccountRepository.findById(id).map(account -> {
+
+              if (account.getAccount_status() != AccountStatus.ACTIVE)
+                  return Response.builder().responseCode("500").message("Account not active").build();
+
+
+              if (account.getBalance().getAmount() < amount && account.getDailyTransactionLimit().getAmount()  > amount  )
+                  return Response.builder().responseCode("500").message("Not enough funds or you have reached your daily transaction limit ").build();
+
+              Money newValue = Money.builder().currency("GBP").amount(account.getBalance().getAmount() - amount).build();
+
+              account.setBalance(newValue);
+
+
+              try {
+
+                  List<UUID>  currList = account.getAccount_transactions();
+                  currList.add(UUID.fromString(this.fundTransactionService.createTransaction(id, amount).getMessage().toString()));
+
+                  account.setAccount_transactions(currList);
+              } catch (Exception e) {
+                  throw new RuntimeException(e);
+              }
+
+
+              this.checkingAccountRepository.save(account);
+              return Response.builder().responseCode("200").message("Success").build();
+
+
+
+          }).orElseThrow(Exception :: new );
 
 
 
@@ -88,80 +139,158 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
 
 
     @Override
-    public boolean  deleteAccount (CheckingAccount account , Long ID ) {
-        this.checkingAccountJPARepository.deleteById(ID);
+    public Response transfer (long value , UUID  receiverId, UUID grantorId ) throws Exception  {
 
-        return !this.checkingAccountJPARepository.existsById(ID);
+
+        if (value <= 0 )
+            throw new Exception("Please transfer a valid amount");
+
+
+        Optional<? extends Account> receiverOptionalAccount =  this.checkingAccountRepository.findById(receiverId);
+        Optional<? extends Account> grantorOptionalAccount =  this.checkingAccountRepository.findById(grantorId);
+
+        if (receiverOptionalAccount.isEmpty())
+            receiverOptionalAccount = this.savingAccountRespository.findById(receiverId);
+
+
+        if (receiverOptionalAccount.isEmpty())
+            return Response.builder().responseCode("404").message("Unable to find receiver account please check account number").build();
+
+
+        if (grantorOptionalAccount.isEmpty())
+            grantorOptionalAccount = this.savingAccountRespository.findById(grantorId);
+
+
+        if (grantorOptionalAccount.isEmpty())
+            return Response.builder().responseCode("404").message("Unable to find grantor account please check account number").build();
+
+
+
+        Account reciverAccount = receiverOptionalAccount.get();
+        Account grantorAccount =  grantorOptionalAccount.get();
+
+        withdraw(value , grantorId);
+        deposit(value , receiverId);
+
+        this.fundTransactionService.createTransaction(receiverId, grantorId, value);
+
+        return Response.builder().responseCode("200").message("Success").build();
 
 
     }
 
 
-    // Get Rate for an entity on  the business logic level
-
     @Override
-    public double getRate(Long Id ) {
-        return this.checkingAccountJPARepository.getReferenceById(Id).getRate();
+    public Response viewBalance (UUID id ) throws Exception  {
+
+       return checkingAccountRepository.findById(id).map(account -> {
+
+           if (account.getAccount_status() != AccountStatus.ACTIVE)
+               return Response.builder().responseCode("400").message("Account is not active").build();
+
+           return Response.builder().responseCode("200").message(account.getBalance().toString()).build();
+
+       }).orElseThrow(Exception :: new );
+
+
     }
 
 
-    // Setting Rate for an entity on the business logic  level
+
 
     @Override
-    public void setRate (Long Id  , double value) {
+    public Response setRate (UUID id , double value ) throws Exception {
+
+        return checkingAccountRepository.findById(id).map(account -> {
+
+            Rate baseRate = account.getRate();
+
+            Rate adjustedRate = Rate.builder()
+                    .rateInfo(baseRate.getRateInfo() * value)
+                    .country(baseRate.getCountry())
+                    .lastUpdated(baseRate.getLastUpdated())
+                    .build();
+
+            return Response.builder().responseCode("200").message("Success new rate" + adjustedRate.getRateInfo() + "%").build();
 
 
-        this.checkingAccountJPARepository.getReferenceById(Id).setRate( getRate(Id) + value);
+
+
+        }).orElseThrow(Exception :: new );
+
+
+
+
+
     }
 
 
-
-
-
-
-
-    // Normal Banking Operations as per Account Service
     @Override
-    public int deposit (double value , Long id  ) {
+    public Response updateAccountStatus  (String selection ,  UUID id  ) throws Exception  {
 
-       // Get Account
-
-        CheckingAccount account = this.checkingAccountJPARepository.getReferenceById(id);
-
-        value = account.getBalance() + value;
-
-       return this.checkingAccountJPARepository.updateByBalance(value , id);
-    }
+        if (selection == null || selection.isBlank())
+            throw new Exception("Account not found");
 
 
-    @Override
-    public int withdraw (double value , Long id ) throws Exception {
-        // Get Account
-        CheckingAccount account  = this.checkingAccountJPARepository.getReferenceById(id);
+        AccountStatus newStatus;
 
-        if (value <= account.getBalance()) {
-            value = account.getBalance() - value;
 
-            return this.checkingAccountJPARepository.updateByBalance(value, id);
-        } else {
+        try {
 
-            throw new Exception();
+            newStatus = AccountStatus.valueOf(selection.toUpperCase());
+
+        } catch (Exception e) {
+            return Response.builder().responseCode("400").message("account status not found").build();
         }
 
+        return  checkingAccountRepository.findById(id).map(account -> {
+
+            if (account == null || account.getAccount_status() != AccountStatus.ACTIVE)
+                return Response.builder().responseCode("404").message("account not found").build();
+
+            account.setAccount_status(AccountStatus.valueOf(selection));
+
+            this.checkingAccountRepository.save(account);
+
+            return Response.builder().responseCode("200").message("Success account status changed").build();
+
+
+        }).orElse(null);
+
+
+
+
+
     }
 
-    @Override
-    public int transfer (double value , Long receiverID,  Long grantorID ) throws Exception {
-            CheckingAccount receiverAcc = this.checkingAccountJPARepository.getReferenceById(receiverID);
-            CheckingAccount grantorAcc = this.checkingAccountJPARepository.getReferenceById(grantorID);
 
-            if (value <= grantorAcc.getBalance()) {
-                this.checkingAccountJPARepository.updateByBalance(grantorAcc.getBalance() - value , grantorID);
-                return this.checkingAccountJPARepository.updateByBalance(receiverAcc.getBalance() + value , receiverID);
-            } else {
-                throw new Exception();
-            }
-    }
+
+
+    public Response applyRate (UUID id ) throws Exception {
+
+
+
+            return  checkingAccountRepository.findById(id).map(account -> {
+
+
+                      long ratedValue =  account.getBalance().getAmount() * account.getRate().getRateInfo().longValue();
+
+
+                       Money rateAppliedBalance = Money.builder().amount(account.getBalance().getAmount() + ratedValue).build();
+                        account.setBalance(rateAppliedBalance);
+
+
+                return Response.builder().responseCode("200").message("Rate applied").build();
+
+
+            }).orElseThrow(Exception :: new );
+
+
+        }
+
+
+
+
 
 
 

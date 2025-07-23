@@ -1,7 +1,7 @@
 package com.example.BankingAppCRUD.Application.Controllers.AccountController;
 
 import com.example.BankingAppCRUD.Application.Request.AccountRequest;
-import com.example.BankingAppCRUD.Application.Response.AccountResponse;
+import com.example.BankingAppCRUD.Application.Response.Response;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Model.CheckingAccount;
 import com.example.BankingAppCRUD.Infrastructure.Service.Account.CheckingAccountServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +63,7 @@ public class CheckingAccountController {
 
 
     @PostMapping
-    public ResponseEntity<AccountResponse> submitAccount (AccountRequest accDTO ) {
+    public ResponseEntity<Response> submitAccount (AccountRequest accDTO ) {
 
 
         checkingAccountServiceImpl.createAccount(AccountRequest);

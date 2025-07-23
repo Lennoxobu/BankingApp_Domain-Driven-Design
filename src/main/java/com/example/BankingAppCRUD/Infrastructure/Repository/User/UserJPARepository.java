@@ -8,8 +8,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
 
-public interface UserJPARepository extends  JpaRepository<User, Long> {
+
+public interface UserJPARepository extends  JpaRepository<User, UUID> {
 
     @Modifying
 

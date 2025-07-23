@@ -10,16 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-
+@Transactional
 public interface CheckingAccountJPARepository extends JpaRepository<CheckingAccount, UUID> {
 
 
 
-
-    @Modifying
-    @Query(value = "UPDATE  _CheckingAccount SET balance = :Num WHERE id = :id",
-            nativeQuery = true)
-    int updateByBalance (@Param("Num") double Num , @Param("id") UUID id);
 
 
 
