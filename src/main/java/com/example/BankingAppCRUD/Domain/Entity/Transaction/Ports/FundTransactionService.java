@@ -19,7 +19,7 @@ public interface FundTransactionService {
 
      Response createTransaction (UUID  recieverId , UUID senderId ,long value ) ;
 
-     Response createTransaction (UUID senderId , long value );
+     Response createTransaction (UUID senderId , long value , String type );
 
 
 

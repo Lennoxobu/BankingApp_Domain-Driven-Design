@@ -1,4 +1,4 @@
-package com.example.BankingAppCRUD.Infrastructure.Service.Security;
+package com.example.BankingAppCRUD.Infrastructure.Config.Security;
 
 public class JWTService {
 }

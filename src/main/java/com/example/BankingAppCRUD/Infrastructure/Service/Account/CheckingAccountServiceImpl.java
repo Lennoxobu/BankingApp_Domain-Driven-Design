@@ -81,7 +81,7 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
         try {
 
             List<UUID>  currList = account.getAccount_transactions();
-            currList.add(UUID.fromString(this.fundTransactionService.createTransaction(id, amount).getMessage().toString()));
+            currList.add(UUID.fromString(this.fundTransactionService.createTransaction(id, amount, "Deposit").getMessage().toString()));
 
             account.setAccount_transactions(currList);
         } catch (Exception e) {
@@ -116,7 +116,7 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
               try {
 
                   List<UUID>  currList = account.getAccount_transactions();
-                  currList.add(UUID.fromString(this.fundTransactionService.createTransaction(id, amount).getMessage().toString()));
+                  currList.add(UUID.fromString(this.fundTransactionService.createTransaction(id, amount, "Withdraw").getMessage().toString()));
 
                   account.setAccount_transactions(currList);
               } catch (Exception e) {
@@ -284,6 +284,8 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
 
 
             }).orElseThrow(Exception :: new );
+
+
 
 
         }

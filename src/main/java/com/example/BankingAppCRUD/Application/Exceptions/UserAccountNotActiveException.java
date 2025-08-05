@@ -1,7 +1,7 @@
 package com.example.BankingAppCRUD.Application.Exceptions;
 
-public class UserAccountNotActive extends RuntimeException {
-  public UserAccountNotActive(String message) {
-    super(message);
-  }
+public class UserAccountNotActiveException extends RuntimeException {
+    public UserAccountNotActiveException(String message) {
+        super(message);
+    }
 }

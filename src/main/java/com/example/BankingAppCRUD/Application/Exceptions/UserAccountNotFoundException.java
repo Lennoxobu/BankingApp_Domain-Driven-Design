@@ -1,7 +1,7 @@
 package com.example.BankingAppCRUD.Application.Exceptions;
 
-public class UserAccountNotFound extends RuntimeException {
-  public UserAccountNotFound(String message) {
-    super(message);
-  }
+public class UserAccountNotFoundException extends RuntimeException {
+    public UserAccountNotFoundException(String message) {
+        super(message);
+    }
 }

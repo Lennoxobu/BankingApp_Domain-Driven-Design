@@ -19,9 +19,11 @@ import java.util.UUID;
 @ToString
 @MappedSuperclass
 @AllArgsConstructor
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @SuperBuilder
 public abstract class Account {
 
+    @Enumerated(EnumType.STRING)
     protected AccountStatus account_status;
     protected Timestamp createdAt;
 
@@ -32,6 +34,8 @@ public abstract class Account {
     @Embedded
     protected Money  balance;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "_Transaction_id")
     protected List<UUID> account_transactions;
 
     @Embedded
@@ -39,6 +43,7 @@ public abstract class Account {
 
 
     @Id
+    @GeneratedValue(strategy = GenerationType.TABLE)
     protected UUID id;
 
 

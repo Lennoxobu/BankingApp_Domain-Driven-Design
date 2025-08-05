@@ -1,7 +1,7 @@
 package com.example.BankingAppCRUD.Infrastructure.Config.Beans;
 
 
-import com.example.BankingAppCRUD.Domain.Entity.Account.Mode.baseRate;
+
 import com.example.BankingAppCRUD.Infrastructure.Config.InterestRate.InterestRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,13 +16,14 @@ public class RateBean {
 
     RateBean (InterestRateService interestRateService) {this.interestRateService = interestRateService; }
 
-    private  double generateRate() {
+    private  double generateRate() throws Exception {
 
         try {
-            return this.interestRateService.getInterestRate().block() + baseRate.rate;
+            return this.interestRateService.getInterestRate().block();
         } catch (NullPointerException Ex ) {
             System.out.println(Ex.getMessage());
-            return baseRate.rate;
+
+            throw new Exception();
 
         }
 

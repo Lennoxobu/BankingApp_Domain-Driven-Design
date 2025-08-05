@@ -1,4 +1,4 @@
-package com.example.BankingAppCRUD.Infrastructure.Service.Security.Filters;
+package com.example.BankingAppCRUD.Infrastructure.Config.Security.Filters;
 
 public class JWTFilter {
 }

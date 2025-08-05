@@ -36,7 +36,11 @@ public class User {
    private Timestamp createdAt;
    private Timestamp lastLoginAt;
 
-   @OneToMany
+   @OneToMany(fetch = FetchType.LAZY)
+   @JoinColumns({
+           @JoinColumn(name = "_CheckingAccount.id" , referencedColumnName = "_CheckingAccount.id" ),
+           @JoinColumn(name = "_SavingAccount.id" , referencedColumnName = "_SavingAccount.id")
+   })
    @Embedded
    private List<UUID> accountIds;
 

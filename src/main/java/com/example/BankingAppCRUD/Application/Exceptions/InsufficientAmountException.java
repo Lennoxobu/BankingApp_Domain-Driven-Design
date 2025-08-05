@@ -1,7 +1,7 @@
 package com.example.BankingAppCRUD.Application.Exceptions;
 
-public class InsuffcientAmount extends RuntimeException {
-    public InsuffcientAmount(String message) {
+public class InsufficientAmountException extends RuntimeException {
+    public InsufficientAmountException(String message) {
         super(message);
     }
 }

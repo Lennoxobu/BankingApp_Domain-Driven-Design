@@ -8,12 +8,18 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Transactional
 public interface CheckingAccountJPARepository extends JpaRepository<CheckingAccount, UUID> {
 
 
+    @Query("SELECT a FROM Account a WHERE a.accountNumber = :accountNumber")
+    Optional<CheckingAccount> findByAccountNumber(@Param("accountNumber") String accountNumber);
+
+    @Query("SELECT a FROM Account a JOIN FETCH a.user WHERE a.accountId = :id")
+    Optional<CheckingAccount> findByIdWithUser(@Param("id") UUID accountId);
 
 
 

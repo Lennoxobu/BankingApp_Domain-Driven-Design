@@ -1,7 +1,7 @@
 package com.example.BankingAppCRUD.Application.Exceptions;
 
-public class AccountActionNotFailed extends RuntimeException {
-    public AccountActionNotFailed(String message) {
+public class AccountActionFailedException extends RuntimeException {
+    public AccountActionFailedException(String message) {
 
         super(message);
     }

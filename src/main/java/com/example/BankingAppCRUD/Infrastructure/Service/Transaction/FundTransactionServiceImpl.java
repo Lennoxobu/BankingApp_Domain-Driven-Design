@@ -7,6 +7,7 @@ import com.example.BankingAppCRUD.Domain.Entity.Transaction.Model.FundTransactio
 import com.example.BankingAppCRUD.Domain.Entity.Transaction.Ports.FundTransactionService;
 import com.example.BankingAppCRUD.Domain.ValueObject.Money;
 import com.example.BankingAppCRUD.Domain.ValueObject.TransactionStatus;
+import com.example.BankingAppCRUD.Domain.ValueObject.TransactionType;
 import com.example.BankingAppCRUD.Infrastructure.Repository.Transaction.TransactionJPARepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -63,7 +64,9 @@ public class FundTransactionServiceImpl implements FundTransactionService {
                .status(TransactionStatus.STARTING_PENDING)
                .amount(
                        Money.builder().amount(value).currency("GBP").build()
-               ).timeStamp(Date.from(Instant.now())).build();
+               ).timeStamp(Date.from(Instant.now()))
+               .type(TransactionType.TRANSFER)
+               .build();
 
 
        FundTransaction transaction = this.transactionMapper.convertToEntity(dto);
@@ -78,10 +81,11 @@ public class FundTransactionServiceImpl implements FundTransactionService {
     }
 
     @Override
-    //Deposit
-    public Response createTransaction(UUID senderId, long value) {
+    //Deposit / Withdraw
+    public Response createTransaction(UUID senderId, long value , String type) {
         if (value <= 0 )
             Response.builder().responseCode("500").message("Value must be greater than zero").build();
+
 
 
         FundTransactionDTO dto = FundTransactionDTO.builder().destinationAccountID(null)
@@ -89,7 +93,8 @@ public class FundTransactionServiceImpl implements FundTransactionService {
                 .status(TransactionStatus.STARTING_PENDING)
                 .amount(
                         Money.builder().amount(value).currency("GBP").build()
-                ).timeStamp(Date.from(Instant.now())).build();
+                ).timeStamp(Date.from(Instant.now()))
+                .type(TransactionType.valueOf(type.toUpperCase())).build();
 
 
 

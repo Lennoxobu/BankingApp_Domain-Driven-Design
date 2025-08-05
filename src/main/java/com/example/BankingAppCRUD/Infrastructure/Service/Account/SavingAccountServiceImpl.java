@@ -67,7 +67,7 @@ public class SavingAccountServiceImpl implements AccountService<SavingAccount> {
             throw new Exception("Account not active");
 
         this.savingAccountRepository.save(account);
-        this.fundTransactionService.createTransaction( account.getId() , amount );
+        this.fundTransactionService.createTransaction( account.getId() , amount , "Deposit");
 
         return Response.builder().responseCode("200").message("Success").build();
 
@@ -101,7 +101,7 @@ public class SavingAccountServiceImpl implements AccountService<SavingAccount> {
 
         this.savingAccountRepository.save(account);
 
-        this.fundTransactionService.createTransaction(account.getId() , amount);
+        this.fundTransactionService.createTransaction(account.getId() , amount, "Withdraw");
 
 
         return Response.builder().responseCode("200").message("Success").build();
