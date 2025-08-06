@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
                 .createdAt(Timestamp.from(Instant.now()))
                 .user_address(dto.address())
                 .user_email(dto.email())
-                .user_role(Role.USER)
+                .user_roles(List.of(Role.USER))
                 .user_username(dto.userName())
                 .lastLoginAt(Timestamp.from(Instant.now()))
                 .user_name(Name.builder().first(dto.firstName()).last(dto.lastName()).knownAs(dto.firstName()).build())
@@ -286,7 +286,7 @@ public class UserServiceImpl implements UserService {
 
         return userJPARepository.findById(id).map(user -> {
 
-            user.setUser_role(Role.valueOf(value.toLowerCase()));
+            user.setUser_roles(Role.valueOf(value.toLowerCase()));
 
 
             return Response.builder().responseCode("200").message("Role change complete").build();

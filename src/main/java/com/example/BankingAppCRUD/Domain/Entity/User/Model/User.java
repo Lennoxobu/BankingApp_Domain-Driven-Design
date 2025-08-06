@@ -32,7 +32,7 @@ public class User {
 
    private AccountStatus status;
 
-   private Role  user_role;
+   private List<Role>  user_roles;
    private Timestamp createdAt;
    private Timestamp lastLoginAt;
 
