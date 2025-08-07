@@ -1,4 +1,4 @@
-package com.example.BankingAppCRUD.Application.Controllers.AuthenticationController;
+package com.example.BankingAppCRUD.Infrastructure.Config.Security.Authetication.AuthenticationController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,6 +40,6 @@ public class AuthApiController {
                         httpServletRequest.getHeader(AuthConstants.AUTHORIZATION_HEADER)
                 ).orElseThrow();
 
-        authService.logout(token;
+        authService.logout(token);
     }
 }

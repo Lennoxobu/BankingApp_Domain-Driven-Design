@@ -2,6 +2,7 @@ package com.example.BankingAppCRUD.Infrastructure.Service.User;
 
 import com.example.BankingAppCRUD.Application.DTOs.AccountDTO;
 import com.example.BankingAppCRUD.Application.DTOs.UserDTO;
+import com.example.BankingAppCRUD.Application.DTOs.UserResponseWithCredentials;
 import com.example.BankingAppCRUD.Application.Mappers.AccountMapper;
 import com.example.BankingAppCRUD.Application.Mappers.UserMapper;
 import com.example.BankingAppCRUD.Application.Response.Response;
@@ -22,6 +23,7 @@ import com.example.BankingAppCRUD.Domain.Entity.User.Model.User;
 import com.example.BankingAppCRUD.Infrastructure.Repository.User.UserJPARepository;
 import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -313,6 +315,15 @@ public class UserServiceImpl implements UserService {
 
             return Response.builder().responseCode("200").message("Status change complete").build();
         }).orElseThrow(() -> new RuntimeException("Status not changed error"));
+    }
+
+
+    public UserResponseWithCredentials getUserCredentialsByUsername (String username) throws NotFoundException {
+        User user = userJPARepository.findByUsername(username).orElseThrow(NotFoundException::new);
+
+
+        return new UserResponseWithCredentials(this.userMapper.convertToDto(user), user.getHashed_password());
+
     }
 
     

@@ -5,7 +5,7 @@ import com.example.BankingAppCRUD.Domain.ValueObject.Role;
 import java.util.List;
 import java.util.UUID;
 
-public record AuthUser (UUID authd , List<Role> roles ) {
+public record AuthUser (UUID authId , List<Role> roles ) {
 
 
 }

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Repository
 @Transactional(readOnly = true)
 public class PostgresUserRepository implements UserRepository<User> {
@@ -17,6 +19,10 @@ public class PostgresUserRepository implements UserRepository<User> {
     PostgresUserRepository (UserJPARepository userJPARepository) {
         this.userJPARepository = userJPARepository;
     }
+
+
+
+
 
 
 

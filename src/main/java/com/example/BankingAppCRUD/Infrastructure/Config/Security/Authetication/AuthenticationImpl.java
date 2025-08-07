@@ -2,6 +2,7 @@ package com.example.BankingAppCRUD.Infrastructure.Config.Security.Authetication;
 
 import com.example.BankingAppCRUD.Domain.ValueObject.Role;
 import com.example.BankingAppCRUD.Infrastructure.Config.Security.User.AuthUser;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+
+
+@AllArgsConstructor
 public class AuthenticationImpl implements Authentication {
 
 
