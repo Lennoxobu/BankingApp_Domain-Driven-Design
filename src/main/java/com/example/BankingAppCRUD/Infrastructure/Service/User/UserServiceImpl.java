@@ -3,6 +3,7 @@ package com.example.BankingAppCRUD.Infrastructure.Service.User;
 import com.example.BankingAppCRUD.Application.DTOs.AccountDTO;
 import com.example.BankingAppCRUD.Application.DTOs.UserDTO;
 import com.example.BankingAppCRUD.Application.DTOs.UserResponseWithCredentials;
+import com.example.BankingAppCRUD.Application.Exceptions.UserAccountNotFoundException;
 import com.example.BankingAppCRUD.Application.Mappers.AccountMapper;
 import com.example.BankingAppCRUD.Application.Mappers.UserMapper;
 import com.example.BankingAppCRUD.Application.Response.Response;
@@ -166,7 +167,7 @@ public class UserServiceImpl implements UserService {
             this.savingAccountRepository.save(account);
 
             return savingAccountRepository.findById(account.getId()).map(gottenAcc -> Response.builder().responseCode("200")
-                    .message("Success - Account created").build()).orElseThrow(Exception :: new);
+                    .message("Success - Account created").build()).orElseThrow(Exception :: new );
 
 
         } else {
@@ -288,7 +289,7 @@ public class UserServiceImpl implements UserService {
 
         return userJPARepository.findById(id).map(user -> {
 
-            user.setUser_roles(Role.valueOf(value.toLowerCase()));
+            user.setUser_roles(List.of(Role.valueOf(value.toLowerCase()), user.getUser_roles().get(0)));
 
 
             return Response.builder().responseCode("200").message("Role change complete").build();
@@ -318,8 +319,8 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public UserResponseWithCredentials getUserCredentialsByUsername (String username) throws NotFoundException {
-        User user = userJPARepository.findByUsername(username).orElseThrow(NotFoundException::new);
+    public UserResponseWithCredentials getUserCredentialsByUsername (String username) throws UserAccountNotFoundException {
+        User user = userJPARepository.findByUsername(username).orElseThrow( () -> new UserAccountNotFoundException("Not found") );
 
 
         return new UserResponseWithCredentials(this.userMapper.convertToDto(user), user.getHashed_password());

@@ -1,5 +1,8 @@
 package com.example.BankingAppCRUD.Infrastructure.Config.Security.Authetication.AuthenticationController;
 
+import com.example.BankingAppCRUD.Infrastructure.Config.Security.DTOs.LoginDTO;
+import com.example.BankingAppCRUD.Infrastructure.Config.Security.DTOs.TokenDTO;
+import com.example.BankingAppCRUD.Infrastructure.Config.Security.Service.AuthService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,7 +40,7 @@ public class AuthApiController {
     public void logout (HttpServletRequest httpServletRequest) {
         String token =
                 Optional.ofNullable(
-                        httpServletRequest.getHeader(AuthConstants.AUTHORIZATION_HEADER)
+                        httpServletRequest.getHeader("Authorization")
                 ).orElseThrow();
 
         authService.logout(token);

@@ -5,6 +5,7 @@ package com.example.BankingAppCRUD.Infrastructure.Config.Security.Service;
 
 import com.example.BankingAppCRUD.Application.DTOs.UserDTO;
 import com.example.BankingAppCRUD.Application.DTOs.UserResponseWithCredentials;
+import com.example.BankingAppCRUD.Infrastructure.Config.Security.Authetication.AuthUserCache;
 import com.example.BankingAppCRUD.Infrastructure.Config.Security.DTOs.LoginDTO;
 import com.example.BankingAppCRUD.Infrastructure.Config.Security.DTOs.TokenDTO;
 import com.example.BankingAppCRUD.Infrastructure.Config.Security.User.AuthUser;
@@ -55,6 +56,11 @@ public class AuthService {
         authUserCache.login(token , authUser);
 
         return new TokenDTO(token);
+    }
+
+
+    public void logout (String  token ) {
+        authUserCache.logout(token);
     }
 
 }

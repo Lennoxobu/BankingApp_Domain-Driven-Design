@@ -1,6 +1,7 @@
 package com.example.BankingAppCRUD.Infrastructure.Config.Security.Filters;
 
 
+import com.example.BankingAppCRUD.Infrastructure.Config.Security.Exceptions.TokenAuthticationException;
 import com.example.BankingAppCRUD.Infrastructure.Config.Security.Authetication.AuthUserCache;
 import com.example.BankingAppCRUD.Infrastructure.Config.Security.Authetication.AuthenticationImpl;
 import com.example.BankingAppCRUD.Infrastructure.Config.Security.User.AuthUser;
@@ -14,9 +15,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.lang.reflect.InaccessibleObjectException;
 
 @Component
+
 public class SecurityAuthenticationFilter extends OncePerRequestFilter {
 
     private final AuthUserCache authUserCache;
@@ -48,6 +49,7 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
 
         AuthUser authUser = authUserCache.getByToken(authenticationHeader)
                 .orElseThrow(() -> new TokenAuthticationException("Token is not valid"));
+
 
 
         AuthenticationImpl authentication =  new AuthenticationImpl(authUser);
