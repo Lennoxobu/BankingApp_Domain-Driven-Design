@@ -1,13 +1,8 @@
 package com.example.BankingAppCRUD.Domain.Entity.Account.Ports;
 
-import com.example.BankingAppCRUD.Application.DTOs.AccountDTO;
 import com.example.BankingAppCRUD.Application.Response.Response;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Model.Account;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 

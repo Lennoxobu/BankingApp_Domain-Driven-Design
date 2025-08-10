@@ -1,9 +1,11 @@
 package com.example.BankingAppCRUD.Infrastructure.Config.Security.Filters;
 
 
+import com.example.BankingAppCRUD.Infrastructure.Config.Security.Exceptions.TokenAuthenticationException;
 import com.example.BankingAppCRUD.Infrastructure.Config.Security.Exceptions.TokenAuthticationException;
-import com.example.BankingAppCRUD.Infrastructure.Config.Security.Authetication.AuthUserCache;
+
 import com.example.BankingAppCRUD.Infrastructure.Config.Security.Authetication.AuthenticationImpl;
+import com.example.BankingAppCRUD.Infrastructure.Config.Security.Service.JWTService;
 import com.example.BankingAppCRUD.Infrastructure.Config.Security.User.AuthUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,11 +22,11 @@ import java.io.IOException;
 
 public class SecurityAuthenticationFilter extends OncePerRequestFilter {
 
-    private final AuthUserCache authUserCache;
+    private final JWTService  jwtService;
 
 
-    public SecurityAuthenticationFilter (AuthUserCache authUserCache) {
-        this.authUserCache = authUserCache;
+    public SecurityAuthenticationFilter ( JWTService jwtService) {
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -37,9 +39,7 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
         String authenticationHeader = request.getHeader("AUTHORIZATION");
 
 
-
-
-        if (authenticationHeader == null ) {
+        if (authenticationHeader == null) {
             //Authentication token is not present , let's rely on anonymous authentication
 
             filterChain.doFilter(request, response);
@@ -47,12 +47,18 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
         }
 
 
-        AuthUser authUser = authUserCache.getByToken(authenticationHeader)
-                .orElseThrow(() -> new TokenAuthticationException("Token is not valid"));
+        String jwtToken = stripBearerPrefix(authenticationHeader);
 
 
+        AuthUser authUser;
+        try {
+            authUser = jwtService.resolveJwtToken(jwtToken);
+        } catch (TokenAuthenticationException ex) {
+            throw new ServletException("Issue found with Jwt token ");
+        }
 
-        AuthenticationImpl authentication =  new AuthenticationImpl(authUser);
+
+        AuthenticationImpl authentication = new AuthenticationImpl(authUser);
 
 
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
@@ -60,7 +66,17 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.setContext(securityContext);
 
 
-        filterChain.doFilter(request , response);
+        filterChain.doFilter(request, response);
 
+    }
+
+
+    //Helper method to takes bearer prefix of the JWT token
+    String stripBearerPrefix (String token ) {
+        if (!token.startsWith("Bearer")) {
+            throw new TokenAuthticationException("Unsupported authentication scheme");
+        }
+
+        return token.substring(7);
     }
 }

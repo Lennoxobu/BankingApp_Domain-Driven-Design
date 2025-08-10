@@ -1,13 +1,12 @@
 package com.example.BankingAppCRUD.Infrastructure.Service.User;
 
-import com.example.BankingAppCRUD.Application.DTOs.AccountDTO;
-import com.example.BankingAppCRUD.Application.DTOs.UserDTO;
-import com.example.BankingAppCRUD.Application.DTOs.UserResponseWithCredentials;
+import com.example.BankingAppCRUD.Application.DTOs.Requests.Account.AccountDTO;
+import com.example.BankingAppCRUD.Application.DTOs.Requests.User.UserDTO;
+import com.example.BankingAppCRUD.Infrastructure.Config.Security.DTOs.UserResponseWithCredentials;
 import com.example.BankingAppCRUD.Application.Exceptions.UserAccountNotFoundException;
 import com.example.BankingAppCRUD.Application.Mappers.AccountMapper;
 import com.example.BankingAppCRUD.Application.Mappers.UserMapper;
 import com.example.BankingAppCRUD.Application.Response.Response;
-import com.example.BankingAppCRUD.Domain.Entity.Account.Model.Account;
 
 import com.example.BankingAppCRUD.Domain.Entity.Account.Model.CheckingAccount;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Model.SavingAccount;
@@ -22,9 +21,7 @@ import com.example.BankingAppCRUD.Infrastructure.Service.Account.SavingAccountSe
 import com.example.BankingAppCRUD.Domain.Entity.User.Model.User;
 
 import com.example.BankingAppCRUD.Infrastructure.Repository.User.UserJPARepository;
-import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;

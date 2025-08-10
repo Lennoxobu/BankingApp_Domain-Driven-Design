@@ -1,6 +1,6 @@
 package com.example.BankingAppCRUD.Infrastructure.Service.Transaction;
 
-import com.example.BankingAppCRUD.Application.DTOs.FundTransactionDTO;
+import com.example.BankingAppCRUD.Application.DTOs.Requests.Transaction.FundTransactionDTO;
 import com.example.BankingAppCRUD.Application.Mappers.TransactionMapper;
 import com.example.BankingAppCRUD.Application.Response.Response;
 import com.example.BankingAppCRUD.Domain.Entity.Transaction.Model.FundTransaction;

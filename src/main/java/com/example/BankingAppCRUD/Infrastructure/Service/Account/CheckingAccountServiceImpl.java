@@ -1,13 +1,9 @@
 package com.example.BankingAppCRUD.Infrastructure.Service.Account;
 
-import com.example.BankingAppCRUD.Application.DTOs.AccountDTO;
-import com.example.BankingAppCRUD.Application.DTOs.FundTransactionDTO;
 import com.example.BankingAppCRUD.Application.Mappers.AccountMapper;
 import com.example.BankingAppCRUD.Application.Response.Response;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Model.Account;
-import com.example.BankingAppCRUD.Domain.Entity.Account.Model.SavingAccount;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Ports.AccountService;
-import com.example.BankingAppCRUD.Domain.Entity.Transaction.Model.FundTransaction;
 import com.example.BankingAppCRUD.Domain.Entity.Transaction.Ports.FundTransactionService;
 import com.example.BankingAppCRUD.Domain.ValueObject.AccountStatus;
 import com.example.BankingAppCRUD.Domain.ValueObject.Money;

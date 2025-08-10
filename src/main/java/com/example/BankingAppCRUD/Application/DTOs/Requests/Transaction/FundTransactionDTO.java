@@ -1,4 +1,4 @@
-package com.example.BankingAppCRUD.Application.DTOs;
+package com.example.BankingAppCRUD.Application.DTOs.Requests.Transaction;
 
 import com.example.BankingAppCRUD.Domain.ValueObject.Money;
 import com.example.BankingAppCRUD.Domain.ValueObject.TransactionStatus;

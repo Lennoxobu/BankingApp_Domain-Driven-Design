@@ -1,6 +1,5 @@
-package com.example.BankingAppCRUD.Application.DTOs;
+package com.example.BankingAppCRUD.Application.DTOs.Requests.User;
 
-import com.example.BankingAppCRUD.Domain.ValueObject.Name;
 import com.example.BankingAppCRUD.Domain.ValueObject.Role;
 import lombok.Builder;
 

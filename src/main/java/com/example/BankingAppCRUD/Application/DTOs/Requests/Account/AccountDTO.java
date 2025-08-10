@@ -1,12 +1,10 @@
-package com.example.BankingAppCRUD.Application.DTOs;
+package com.example.BankingAppCRUD.Application.DTOs.Requests.Account;
 
 
 import com.example.BankingAppCRUD.Domain.ValueObject.AccountInfo;
 import com.example.BankingAppCRUD.Domain.ValueObject.AccountStatus;
 import com.example.BankingAppCRUD.Domain.ValueObject.Rate;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 
 import java.sql.Timestamp;
 

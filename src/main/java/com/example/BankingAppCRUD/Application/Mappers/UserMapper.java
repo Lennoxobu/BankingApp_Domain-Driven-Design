@@ -1,10 +1,6 @@
 package com.example.BankingAppCRUD.Application.Mappers;
 
-import com.example.BankingAppCRUD.Application.DTOs.AccountDTO;
-import com.example.BankingAppCRUD.Application.DTOs.UserDTO;
-import com.example.BankingAppCRUD.Domain.Entity.Account.Model.Account;
-import com.example.BankingAppCRUD.Domain.Entity.Account.Model.CheckingAccount;
-import com.example.BankingAppCRUD.Domain.Entity.Account.Model.SavingAccount;
+import com.example.BankingAppCRUD.Application.DTOs.Requests.User.UserDTO;
 import com.example.BankingAppCRUD.Domain.Entity.User.Model.User;
 import org.springframework.beans.BeanUtils;
 

@@ -1,7 +1,7 @@
 package com.example.BankingAppCRUD.Domain.Entity.User.Ports;
 
-import com.example.BankingAppCRUD.Application.DTOs.AccountDTO;
-import com.example.BankingAppCRUD.Application.DTOs.UserDTO;
+import com.example.BankingAppCRUD.Application.DTOs.Requests.Account.AccountDTO;
+import com.example.BankingAppCRUD.Application.DTOs.Requests.User.UserDTO;
 import com.example.BankingAppCRUD.Application.Response.Response;
 
 import java.util.List;

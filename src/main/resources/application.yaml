@@ -94,4 +94,8 @@ banking:
     retention-days: 2555  # 7 years
 
 
+  jwt:
+    signing-secret: ${SignSecret} #Use an environment variable for the key
+
+
 
