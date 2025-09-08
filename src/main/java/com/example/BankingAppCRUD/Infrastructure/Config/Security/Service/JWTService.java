@@ -9,7 +9,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.BankingAppCRUD.Domain.ValueObject.Role;
 import com.example.BankingAppCRUD.Infrastructure.Config.Security.Exceptions.TokenAuthenticationException;
 import com.example.BankingAppCRUD.Infrastructure.Config.Security.User.AuthUser;
-import com.fasterxml.jackson.databind.DatabindException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,7 @@ public class JWTService {
     private final Algorithm signingAlgorithm;
 
 
-    public JWTService (@Value("${jwt.signing-secret}") String signingSecret ) {
+    public JWTService (@Value("${banking.jwt.signing-secret}") String signingSecret ) {
 
 
 

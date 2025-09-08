@@ -29,20 +29,19 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
     private  final InterestRateService interestRateService;
     private final NumberGeneratorBean numberGeneratorBean;
     private final FundTransactionService fundTransactionService;
-    private final SavingAccountJPARepository savingAccountRespository;
-    private final AccountMapper accountMapper;
+    private final SavingAccountJPARepository savingAccountRepository;
+    private final AccountMapper accountMapper = new AccountMapper();
 
 
 
     @Autowired
-    CheckingAccountServiceImpl(InterestRateService interestRateService, CheckingAccountJPARepository checkingAccountRepository, NumberGeneratorBean numberGeneratorBean, FundTransactionService fundTransactionService,AccountMapper accountMapper , SavingAccountJPARepository savingAccountRespository ) {
+    CheckingAccountServiceImpl(InterestRateService interestRateService, CheckingAccountJPARepository checkingAccountRepository, NumberGeneratorBean numberGeneratorBean, FundTransactionService fundTransactionService , SavingAccountJPARepository savingAccountRepository) {
 
         this.checkingAccountRepository = checkingAccountRepository;
         this.interestRateService = interestRateService;
         this.numberGeneratorBean = numberGeneratorBean;
-        this.fundTransactionService = fundTransactionService;
-        this.savingAccountRespository = savingAccountRespository;
-        this.accountMapper = new AccountMapper();
+        this.fundTransactionService =  fundTransactionService;
+        this.savingAccountRepository = savingAccountRepository;
 
 
     }
@@ -146,7 +145,7 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
         Optional<? extends Account> grantorOptionalAccount =  this.checkingAccountRepository.findById(grantorId);
 
         if (receiverOptionalAccount.isEmpty())
-            receiverOptionalAccount = this.savingAccountRespository.findById(receiverId);
+            receiverOptionalAccount = this.savingAccountRepository.findById(receiverId);
 
 
         if (receiverOptionalAccount.isEmpty())
@@ -154,7 +153,7 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
 
 
         if (grantorOptionalAccount.isEmpty())
-            grantorOptionalAccount = this.savingAccountRespository.findById(grantorId);
+            grantorOptionalAccount = this.savingAccountRepository.findById(grantorId);
 
 
         if (grantorOptionalAccount.isEmpty())

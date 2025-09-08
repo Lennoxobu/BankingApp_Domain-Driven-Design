@@ -449,7 +449,7 @@ public class SavingAccountController {
             logger.warn("Saving account not found: {} [correlationId: {}]", accountId, correlationId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Response.builder().responseCode("404").message("Account not found").build());
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logger.error("Error getting minimum balance for saving accountId: {} [correlationId: {}]", accountId, correlationId, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Response.builder().responseCode("500").message("Internal server error").build());

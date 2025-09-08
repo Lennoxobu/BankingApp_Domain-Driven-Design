@@ -33,17 +33,16 @@ public class SavingAccountServiceImpl implements AccountService<SavingAccount> {
     private final SavingAccountJPARepository savingAccountRepository;
     private final CheckingAccountJPARepository checkingAccountRepository;
     private final InterestRateService interestRateService;
-    private final AccountMapper accountMapper;
+    private final AccountMapper accountMapper =  new AccountMapper();
     private final FundTransactionService fundTransactionService;
 
 
 
     @Autowired
-    SavingAccountServiceImpl(SavingAccountJPARepository savingAccountRepository , InterestRateService interestRateService , NumberGeneratorBean numberGeneratorBean , AccountMapper accountMapper , FundTransactionService fundTransactionService,
+    SavingAccountServiceImpl(SavingAccountJPARepository savingAccountRepository , InterestRateService interestRateService , NumberGeneratorBean numberGeneratorBean  , FundTransactionService fundTransactionService,
     CheckingAccountJPARepository checkingAccountRepository) {
         this.savingAccountRepository = savingAccountRepository;
         this.interestRateService = interestRateService;
-        this.accountMapper = new AccountMapper();
         this.fundTransactionService = fundTransactionService;
         this.checkingAccountRepository = checkingAccountRepository;
     }

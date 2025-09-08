@@ -61,7 +61,7 @@ public class UserController {
             UserDTO userResponse = UserDTO.builder()
                     .firstName(user.getUser_name().getFirst())
                     .lastName(user.getUser_name().getLast())
-                    .userName(user.getUser_username())
+                    .userName(user.getUsername())
                     .email(user.getUser_email())
                     .address(user.getUser_address())
                     .id(user.getUser_id())
@@ -84,6 +84,7 @@ public class UserController {
                     .body(Response.builder().responseCode("500").message("Internal server error").build());
         }
     }
+
 
     @PostMapping("/register")
     @Operation(summary = "Register new user", description = "Register a new user in the system")
@@ -119,6 +120,7 @@ public class UserController {
                     .body(Response.builder().responseCode("500").message("Internal server error").build());
         }
     }
+
 
     @DeleteMapping("/{userId}")
     @Operation(summary = "Delete user", description = "Delete a specific user from the system")

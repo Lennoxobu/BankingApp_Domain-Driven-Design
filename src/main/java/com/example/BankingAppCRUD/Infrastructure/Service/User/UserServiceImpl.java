@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
                 .user_address(dto.address())
                 .user_email(dto.email())
                 .user_roles(List.of(Role.USER))
-                .user_username(dto.userName())
+                .username(dto.userName())
                 .lastLoginAt(Timestamp.from(Instant.now()))
                 .user_name(Name.builder().first(dto.firstName()).last(dto.lastName()).knownAs(dto.firstName()).build())
                 .accountIds(List.of(null))

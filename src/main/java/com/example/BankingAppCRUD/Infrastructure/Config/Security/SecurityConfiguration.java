@@ -59,6 +59,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
        return http
+               .cors(Customizer.withDefaults()) // Use CORS configuration bean named corsConfigurationSource
                .addFilterBefore(securityAuthenticationFilter, AuthorizationFilter.class)
                .authorizeHttpRequests(
                        matcher ->
@@ -73,9 +74,9 @@ public class SecurityConfiguration {
                                        .permitAll())
                .authorizeHttpRequests(matcher ->
                                             matcher
-                                                    //method security will be evaluted after DSL configs ,
+                                                    //method security will be evaluated after DSL configs ,
                                                     //so we have to define public paths upfront
-                                                    .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/users")
+                                                    .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/users" , "/api/v1/users/register")
                                                     .permitAll())
                .authorizeHttpRequests(matcher -> matcher.anyRequest().authenticated())
 

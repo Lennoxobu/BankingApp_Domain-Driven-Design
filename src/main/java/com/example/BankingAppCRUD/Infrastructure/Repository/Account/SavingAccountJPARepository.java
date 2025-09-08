@@ -16,10 +16,6 @@ import java.util.UUID;
 public interface SavingAccountJPARepository extends JpaRepository<SavingAccount, UUID> {
 
 
-    @Query("SELECT a FROM Account a WHERE a.accountNumber = :accountNumber")
-    Optional<SavingAccount> findByAccountNumber(@Param("accountNumber") String accountNumber);
 
-    @Query("SELECT a FROM Account a JOIN FETCH a.user WHERE a.accountId = :id")
-    Optional<SavingAccount> findByIdWithUser(@Param("id") UUID accountId);
 
 }

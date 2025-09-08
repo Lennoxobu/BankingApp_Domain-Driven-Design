@@ -10,5 +10,6 @@ import java.util.Date;
 import java.util.UUID;
 
 @Builder
-public record FundTransactionDTO (Money amount, UUID sourceAccountID , UUID destinationAccountID , TransactionStatus status , Date timeStamp , TransactionType type) {
+public record FundTransactionDTO (Money amount, UUID sourceAccountID , UUID destinationAccountID , TransactionStatus status ,
+                                  Date timeStamp , TransactionType type) {
 }

@@ -1,11 +1,14 @@
 spring:
   application:
     name: enterprise-banking-api
+  scheme:
+    -https
+    -http
 
   datasource:
     url: jdbc:postgresql://localhost:5432/Bank_ProjectDB
-    username: ${DB_USERNAME:banking_user}
-    password: ${DB_PASSWORD:banking_password}
+    username: #${DB_USERNAME:banking_user}
+    password:  #${DB_PASSWORD:banking_password}
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 20000
@@ -18,7 +21,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
@@ -95,7 +98,7 @@ banking:
 
 
   jwt:
-    signing-secret: ${SignSecret} #Use an environment variable for the key
+    signing-secret: ${test_key} #Use an environment variable for the key
 
 
 

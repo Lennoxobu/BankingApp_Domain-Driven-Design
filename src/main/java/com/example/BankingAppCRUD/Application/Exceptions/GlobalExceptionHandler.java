@@ -149,6 +149,49 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<OperationalResultDTO> handleTransactionNotFoundException(
+            TransactionNotFoundException ex, WebRequest request) {
+
+        logger.warn("Transaction not found - Request: {} - Error: {}", request.getDescription(false), ex.getMessage());
+
+        OperationalResultDTO error = new OperationalResultDTO();
+        error.setSuccess(false);
+        error.setMessage("Transaction not found");
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(TransactionParsingException.class)
+    public ResponseEntity<OperationalResultDTO> handleTransactionParsingException(
+            TransactionParsingException ex, WebRequest request) {
+
+        logger.error("Transaction parsing error - Request: {} - Error: {}", 
+                    request.getDescription(false), ex.getMessage(), ex);
+
+        OperationalResultDTO error = new OperationalResultDTO();
+        error.setSuccess(false);
+        error.setMessage("Invalid transaction data format");
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TransactionSearchResultNotFoundException.class)
+    public ResponseEntity<OperationalResultDTO> handleTransactionSearchResultNotFoundException(
+            TransactionSearchResultNotFoundException ex, WebRequest request) {
+
+        logger.warn("Transaction search returned no results - Request: {} - Error: {}", 
+                   request.getDescription(false), ex.getMessage());
+
+        OperationalResultDTO error = new OperationalResultDTO();
+        error.setSuccess(false);
+        error.setMessage("No transactions found matching the search criteria");
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+
+
 
 
 

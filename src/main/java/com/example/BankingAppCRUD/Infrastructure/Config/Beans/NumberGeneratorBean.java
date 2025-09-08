@@ -36,9 +36,9 @@ public class NumberGeneratorBean {
 
 
     @Bean
-    public int  generateSafetyKey (String accountNumber ) {
+    public Integer  generateSafetyKey (String accountNumber ) {
 
-        return Integer.getInteger(UUID.fromString(accountNumber.substring(0, 5)).toString());
+        return Integer.getInteger(accountNumber.substring(0, 5).toString());
 
     }
 

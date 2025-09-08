@@ -19,7 +19,6 @@ import java.util.UUID;
 @ToString
 @MappedSuperclass
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @SuperBuilder
 public abstract class Account {
 
@@ -32,9 +31,11 @@ public abstract class Account {
 
 
     @Embedded
-    protected Money  balance;
+    @AttributeOverride(name = "amount" , column = @Column(name = "balance_amount"))
+    @AttributeOverride(name = "currency" , column = @Column(name = "balance_currency"))
+    protected Money balance;
 
-    @OneToMany(fetch = FetchType.LAZY)
+
     @JoinColumn(name = "_Transaction_id")
     protected List<UUID> account_transactions;
 
@@ -43,8 +44,12 @@ public abstract class Account {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.UUID)
     protected UUID id;
+
+
+    @Column(name = "deleted")
+    protected boolean deleted =  false;
 
 
 

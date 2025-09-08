@@ -14,30 +14,5 @@ import java.util.UUID;
 
 public interface UserJPARepository extends  JpaRepository<User, UUID> {
 
-    @Modifying
-
-    @Query(value = "UPDATE _User SET firstName = :keyword WHERE id = :id",
-            nativeQuery = true)
-    int updateByFirstName (@Param("keyword") String value , @Param("id") long id );
-
-    @Modifying
-    @Query(value = "UPDATE _User SET lastName= :keyword WHERE id = :id",
-            nativeQuery = true)
-    int updateByLastName (@Param("keyword") String value, @Param("id") long id);
-
-
-    @Modifying
-    @Query(value="UPDATE _User SET checkingAccount= NULL WHERE id = :id",
-                nativeQuery = true )
-    int  removeCheckingAccount(@Param("id") Long id);
-
-
-    @Modifying
-    @Query(value = "UPDATE _User SET savingAccount= NULL WHERE id = :id" ,
-                        nativeQuery = true)
-    int removeSavingAccount (@Param("id") Long id);
-
-
-
     Optional<User> findByUsername (String username);
 }
