@@ -134,6 +134,7 @@ public class TransactionController {
                                                               @RequestHeader(value = "X-Correlation-ID", required = false)
                                                               String correlationId ,
                                                               @PathVariable  UUID transaction_id  ) {
+        //not implemented yet
             return null;
 
 
@@ -196,6 +197,7 @@ public class TransactionController {
                                                                                    String correlationId,
                                                                                    @PathVariable UUID account_id
                                                                                 ) {
+        // not implemented yet
         return null;
     }
 
@@ -242,6 +244,7 @@ public class TransactionController {
                                                                         @RequestHeader(value = "X-Correlation-ID", required = false)
                                                                         String correlationId,
                                                                         @PathVariable UUID account_id) {
+        // Not implmented yet
         return null;
     }
 

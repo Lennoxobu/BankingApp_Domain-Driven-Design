@@ -32,5 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
-#### Files  for Git to ignore #####
+#### Files for Git to ignore #####
 /src/main/java/com/example/BankingAppCRUD/Infrastructure/Config/InterestRate/BankRateAPIKey.java
+
+
+#### Log files to ignore when running ###
+logs
