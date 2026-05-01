@@ -38,3 +38,8 @@ build/
 
 #### Log files to ignore when running ###
 logs
+
+
+
+### Mac OS files ####
+.DS_Store

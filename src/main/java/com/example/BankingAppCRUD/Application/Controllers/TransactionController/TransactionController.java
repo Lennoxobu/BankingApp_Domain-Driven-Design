@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -127,7 +127,7 @@ public class TransactionController {
             @ApiResponse(responseCode = "404", description = "Transactions not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> deleteTransaction (       @Parameter(description = "Account ID", required = true)
                                                               @PathVariable UUID account_id,
                                                               @Parameter(description = "Transaction ID ", required = true)
@@ -150,7 +150,7 @@ public class TransactionController {
             @ApiResponse(responseCode = "404", description = "Transactions not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> deleteTransactionsList ( @Parameter(description = "Account ID", required = true)
                                                          @PathVariable UUID account_id,
                                                          @Parameter(description = "Transaction ID ", required = true)

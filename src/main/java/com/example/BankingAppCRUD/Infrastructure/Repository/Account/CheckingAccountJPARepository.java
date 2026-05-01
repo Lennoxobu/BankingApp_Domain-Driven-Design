@@ -16,8 +16,4 @@ public interface CheckingAccountJPARepository extends JpaRepository<CheckingAcco
 
 
 
-
-
-
-
 }

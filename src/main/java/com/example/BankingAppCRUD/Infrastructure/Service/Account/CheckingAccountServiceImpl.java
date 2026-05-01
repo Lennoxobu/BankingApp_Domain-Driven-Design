@@ -35,7 +35,11 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
 
 
     @Autowired
-    CheckingAccountServiceImpl(InterestRateService interestRateService, CheckingAccountJPARepository checkingAccountRepository, NumberGeneratorBean numberGeneratorBean, FundTransactionService fundTransactionService , SavingAccountJPARepository savingAccountRepository) {
+    CheckingAccountServiceImpl(InterestRateService interestRateService,
+                               CheckingAccountJPARepository checkingAccountRepository,
+                               NumberGeneratorBean numberGeneratorBean,
+                               FundTransactionService fundTransactionService ,
+                               SavingAccountJPARepository savingAccountRepository) {
 
         this.checkingAccountRepository = checkingAccountRepository;
         this.interestRateService = interestRateService;

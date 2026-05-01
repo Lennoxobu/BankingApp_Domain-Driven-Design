@@ -2,8 +2,7 @@ package com.example.BankingAppCRUD.Infrastructure.Service.User;
 
 import com.example.BankingAppCRUD.Application.DTOs.Requests.Account.AccountDTO;
 import com.example.BankingAppCRUD.Application.DTOs.Requests.User.UserDTO;
-import com.example.BankingAppCRUD.Infrastructure.Config.Security.DTOs.UserResponseWithCredentials;
-import com.example.BankingAppCRUD.Application.Exceptions.UserAccountNotFoundException;
+//import com.example.BankingAppCRUD.Infrastructure.Config.Security.DTOs.UserResponseWithCredentials;
 import com.example.BankingAppCRUD.Application.Mappers.AccountMapper;
 import com.example.BankingAppCRUD.Application.Mappers.UserMapper;
 import com.example.BankingAppCRUD.Application.Response.Response;
@@ -27,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -72,24 +72,26 @@ public class UserServiceImpl implements UserService {
     public Response register (UserDTO dto) throws Exception {
 
 
-        //Need to implement the password charger method
-        User user = User.builder().user_id(UUID.randomUUID())
-                .createdAt(Timestamp.from(Instant.now()))
-                .user_address(dto.address())
-                .user_email(dto.email())
-                .user_roles(List.of(Role.USER))
-                .username(dto.userName())
-                .lastLoginAt(Timestamp.from(Instant.now()))
-                .user_name(Name.builder().first(dto.firstName()).last(dto.lastName()).knownAs(dto.firstName()).build())
-                .accountIds(List.of(null))
-                .status(AccountStatus.ACTIVE)
-                .build();
+            //Need to implement the password charger method
+            User user = User.builder()
+                    .createdAt(Timestamp.from(Instant.now()))
+                    .user_address(dto.address())
+                    .user_email(dto.email())
+                    .user_roles(List.of(Role.USER))
+                    .username(dto.userName())
+                    .lastLoginAt(Timestamp.from(Instant.now()))
+                    .user_name(Name.builder().first(dto.firstName()).last(dto.lastName()).knownAs(dto.firstName()).build())
+                    .accountIds(List.of())
+                    .status(AccountStatus.ACTIVE)
+                    .build();
 
 
-        this.userJPARepository.save(user);
+
+            this.userJPARepository.save(user);
 
 
-        return Response.builder().responseCode("200").message("Success - User account created").build();
+            return Response.builder().responseCode("200").message("Success - User account created").build();
+
 
 
 
@@ -316,15 +318,15 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public UserResponseWithCredentials getUserCredentialsByUsername (String username) throws UserAccountNotFoundException {
-        User user = userJPARepository.findByUsername(username).orElseThrow( () -> new UserAccountNotFoundException("Not found") );
+//    public UserResponseWithCredentials getUserCredentialsByUsername (String username) throws UserAccountNotFoundException {
+//        User user = userJPARepository.findByUsername(username).orElseThrow( () -> new UserAccountNotFoundException("Not found") );
+//
+//
+//        return new UserResponseWithCredentials(this.userMapper.convertToDto(user), user.getHashed_password());
+//
+//    }
 
 
-        return new UserResponseWithCredentials(this.userMapper.convertToDto(user), user.getHashed_password());
-
-    }
-
-    
 
 
 }

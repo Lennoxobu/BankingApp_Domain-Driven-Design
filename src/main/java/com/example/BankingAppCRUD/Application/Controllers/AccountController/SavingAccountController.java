@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,7 +57,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "404", description = "Account not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getAccountDetails(
             @Parameter(description = "Account ID", required = true)
             @PathVariable UUID accountId,
@@ -100,7 +100,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "200", description = "Balance retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Account not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getAccountBalance(
             @Parameter(description = "Account ID", required = true)
             @PathVariable UUID accountId,
@@ -127,7 +127,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "Account not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> depositMoney(
             @Parameter(description = "Account ID", required = true)
             @PathVariable UUID accountId,
@@ -165,7 +165,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "400", description = "Invalid request or insufficient funds"),
             @ApiResponse(responseCode = "404", description = "Account not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> withdrawMoney(
             @Parameter(description = "Account ID", required = true)
             @PathVariable UUID accountId,
@@ -207,7 +207,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "400", description = "Invalid request or insufficient funds"),
             @ApiResponse(responseCode = "404", description = "Account not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> transferMoney(
             @Parameter(description = "Sender Account ID", required = true)
             @PathVariable UUID senderId,
@@ -250,7 +250,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "200", description = "Transaction history retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Account not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<FundTransactionDTO>> getTransactionHistory(
             @Parameter(description = "Account ID", required = true)
             @PathVariable UUID accountId,
@@ -284,7 +284,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "Account not found")
     })
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> changeAccountStatus(
             @Parameter(description = "Account ID", required = true)
             @PathVariable UUID accountId,
@@ -316,7 +316,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "200", description = "Interest rate retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Account not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getInterestRate(
             @Parameter(description = "Account ID", required = true)
             @PathVariable UUID accountId,
@@ -353,7 +353,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "Account not found")
     })
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> setInterestRate(
             @Parameter(description = "Account ID", required = true)
             @PathVariable UUID accountId,
@@ -390,7 +390,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "200", description = "Interest accrued retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Account not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getInterestAccrued(
             @Parameter(description = "Account ID", required = true)
             @PathVariable UUID accountId,
@@ -426,7 +426,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "200", description = "Minimum balance retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Account not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getMinimumBalance(
             @Parameter(description = "Account ID", required = true)
             @PathVariable UUID accountId,
@@ -462,7 +462,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "200", description = "Interest applied successfully"),
             @ApiResponse(responseCode = "404", description = "Account not found")
     })
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> applyInterest(
             @Parameter(description = "Account ID", required = true)
             @PathVariable UUID accountId,
@@ -493,7 +493,7 @@ public class SavingAccountController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "Account not found")
     })
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> updateCompoundFrequency(
             @Parameter(description = "Account ID", required = true)
             @PathVariable UUID accountId,

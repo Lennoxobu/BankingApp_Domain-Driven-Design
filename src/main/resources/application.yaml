@@ -38,12 +38,12 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
 
-  security:
-    headers:
-      content-security-policy: "default-src 'self'"
-      frame-options: DENY
-      content-type-options: nosniff
-      xss-protection: 1; mode=block
+#  security:
+#    headers:
+#      content-security-policy: "default-src 'self'"
+#      frame-options: DENY
+#      content-type-options: nosniff
+#      xss-protection: 1; mode=block
 
   transaction:
     default-timeout: 30
@@ -77,7 +77,7 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{correlationId}] %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{correlationId}] %logger{36} - %msg%n"
   file:
-    name: logs/banking-api.log
+    name: 'logs/banking-api.log-"%d{yyyy-MM-dd}"'
 
 banking:
   security:
@@ -86,6 +86,8 @@ banking:
       allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
       allowed-headers: "*"
       max-age: 3600
+      security.basic.enable: false
+      security.ignored: /**
 
   transaction:
     daily-limit: 10000

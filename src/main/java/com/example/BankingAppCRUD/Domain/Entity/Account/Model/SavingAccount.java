@@ -45,6 +45,8 @@ public class SavingAccount extends Account {
     private Money minBalance;
 
     private Frequency compoundFrequency;
+
+
     private Timestamp lastInterestedAppliedAt;
 
 

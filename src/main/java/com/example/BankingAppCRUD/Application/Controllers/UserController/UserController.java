@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> getUserDetails(
             @Parameter(description = "User ID", required = true)
             @PathVariable UUID userId,
@@ -129,7 +129,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> deleteUser(
             @Parameter(description = "User ID", required = true)
             @PathVariable UUID userId,
@@ -156,7 +156,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> createAccount(
             @Parameter(description = "User ID", required = true)
             @PathVariable UUID userId,
@@ -189,7 +189,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Account not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> deleteAccount(
             @Parameter(description = "User ID", required = true)
             @PathVariable UUID userId,
@@ -217,7 +217,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Accounts retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<AccountDTO>> getUserAccounts(
             @Parameter(description = "User ID", required = true)
             @PathVariable UUID userId,
@@ -245,7 +245,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> changeEmail(
             @Parameter(description = "User ID", required = true)
             @PathVariable UUID userId,
@@ -273,7 +273,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> changeAddress(
             @Parameter(description = "User ID", required = true)
             @PathVariable UUID userId,
@@ -301,7 +301,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Response> changeName(
             @Parameter(description = "User ID", required = true)
             @PathVariable UUID userId,
@@ -329,7 +329,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> changeRole(
             @Parameter(description = "User ID", required = true)
             @PathVariable UUID userId,
@@ -358,7 +358,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> changeStatus(
             @Parameter(description = "User ID", required = true)
             @PathVariable UUID userId,
@@ -386,7 +386,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User found successfully"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response> getUserByUsername(
             @Parameter(description = "Username", required = true)
             @PathVariable String username,
