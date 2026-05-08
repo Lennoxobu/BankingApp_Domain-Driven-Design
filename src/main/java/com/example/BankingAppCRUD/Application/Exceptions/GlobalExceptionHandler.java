@@ -6,10 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.HashMap;
@@ -19,6 +21,22 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+
+
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<OperationalResultDTO> handleResourceNotFoundException(
+                NoResourceFoundException ex , WebRequest  request) {
+        logger.warn ("Resource not found or not made available: {}" , ex.getMessage());
+        OperationalResultDTO error = new OperationalResultDTO();
+
+        error.setSuccess(false);
+        error.setMessage(ex.getMessage());
+
+
+        return new ResponseEntity<>(error , HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(AccountNotFoundException.class)
     public ResponseEntity<OperationalResultDTO> handleAccountNotFoundException(
@@ -62,26 +80,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<OperationalResultDTO> handleGeneralException(
-            Exception ex, WebRequest request) {
-
-        logger.error("Unexpected error: ", ex.getMessage());
-
-        OperationalResultDTO error = new OperationalResultDTO();
-        error.setSuccess(false);
-        error.setMessage("An unexpected error occurred");
-
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-
     @ExceptionHandler(AccountActionFailedException.class)
     public ResponseEntity<OperationalResultDTO> handleAccountActionFailedException (
             AccountActionFailedException ex , WebRequest request
     ) {
 
-        logger.error("Account action failed", ex.getMessage());
+        logger.error("Account action failed: {}", ex.getMessage());
         OperationalResultDTO error = new OperationalResultDTO();
         error.setSuccess(false);
         error.setMessage("Account failed please check action and try again");
@@ -190,6 +194,35 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<OperationalResultDTO> handleHttpRequestMethodNotSupportedException(
+            HttpRequestMethodNotSupportedException ex , WebRequest request) {
+        logger.warn("Request method for this endpoint is not supported: {}" , ex.getMessage());
+
+        OperationalResultDTO error = new OperationalResultDTO();
+        error.setSuccess(false);
+        error.setMessage(ex.getMessage());
+
+
+        return new ResponseEntity<>(error , HttpStatus.BAD_REQUEST);
+    }
+
+
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<OperationalResultDTO> handleGeneralException(
+            Exception ex, WebRequest request) {
+
+        logger.error("Unexpected error this is caught with the general exception handler: {} ", ex.getMessage());
+
+        OperationalResultDTO error = new OperationalResultDTO();
+        error.setSuccess(false);
+        error.setMessage(ex.getMessage());
+
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 
 

@@ -1,5 +1,6 @@
 package com.example.BankingAppCRUD.Domain.Entity.Account.Model;
 
+
 import com.example.BankingAppCRUD.Domain.Entity.Transaction.Model.FundTransaction;
 import com.example.BankingAppCRUD.Domain.ValueObject.AccountInfo;
 import com.example.BankingAppCRUD.Domain.ValueObject.AccountStatus;
@@ -8,6 +9,8 @@ import com.example.BankingAppCRUD.Domain.ValueObject.Rate;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 
 import java.sql.Timestamp;
@@ -17,9 +20,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@MappedSuperclass
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @AllArgsConstructor
+@NoArgsConstructor
 @SuperBuilder
+@Entity
 public abstract class Account {
 
     @Enumerated(EnumType.STRING)
@@ -36,8 +41,9 @@ public abstract class Account {
     protected Money balance;
 
 
-    @JoinColumn(name = "_Transaction_id")
-    protected List<UUID> account_transactions;
+    @OneToMany(cascade = CascadeType.ALL ,fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    protected List<FundTransaction> account_transactions;
 
     @Embedded
     protected Rate rate;
@@ -45,6 +51,8 @@ public abstract class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.UUID)
+    @NonNull
     protected UUID id;
 
 

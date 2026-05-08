@@ -122,7 +122,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/delete/{userId}")
     @Operation(summary = "Delete user", description = "Delete a specific user from the system")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User deleted successfully"),
@@ -149,7 +149,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{userId}/create-account")
+    @PostMapping("/create-account/{userId}")
     @Operation(summary = "Create account for user", description = "Create a new bank account for a specific user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Account created successfully"),
@@ -182,7 +182,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{userId}/accounts/{accountId}")
+    @DeleteMapping("/delete/{userId}/accounts/{accountId}")
     @Operation(summary = "Delete user account", description = "Delete a specific account for a user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Account deleted successfully"),
@@ -211,7 +211,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{userId}/accounts")
+    @GetMapping("/accounts/{userId}")
     @Operation(summary = "Get user accounts", description = "Retrieve all accounts for a specific user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Accounts retrieved successfully"),
@@ -238,7 +238,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}/email")
+    @PutMapping("email/{userId}")
     @Operation(summary = "Change user email", description = "Change the email address for a specific user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Email changed successfully"),
@@ -266,7 +266,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}/address")
+    @PutMapping("/address/{userId}")
     @Operation(summary = "Change user address", description = "Change the address for a specific user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Address changed successfully"),
@@ -294,7 +294,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}/name")
+    @PutMapping("/name")
     @Operation(summary = "Change user name", description = "Change the name for a specific user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Name changed successfully"),
@@ -322,7 +322,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}/role")
+    @PutMapping("/role/{userId}")
     @Operation(summary = "Change user role", description = "Change the role for a specific user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Role changed successfully"),
@@ -351,7 +351,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}/status")
+    @PutMapping("/status/{userId}")
     @Operation(summary = "Change user status", description = "Change the status for a specific user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Status changed successfully"),

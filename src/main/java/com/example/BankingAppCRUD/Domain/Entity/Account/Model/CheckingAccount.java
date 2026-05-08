@@ -1,6 +1,5 @@
 package com.example.BankingAppCRUD.Domain.Entity.Account.Model;
 
-import com.example.BankingAppCRUD.Domain.Entity.User.Model.User;
 import com.example.BankingAppCRUD.Domain.ValueObject.DebitInfo;
 import com.example.BankingAppCRUD.Domain.ValueObject.Money;
 import jakarta.persistence.*;
@@ -12,8 +11,9 @@ import org.hibernate.annotations.Where;
 @Setter
 @Table(name= "_CheckingAccount")
 @ToString
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 @Where(clause= "deleted = false" )
 @Entity
 public class CheckingAccount extends Account {

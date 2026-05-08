@@ -4,10 +4,12 @@ import com.example.BankingAppCRUD.Application.Mappers.AccountMapper;
 import com.example.BankingAppCRUD.Application.Response.Response;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Model.Account;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Ports.AccountService;
+import com.example.BankingAppCRUD.Domain.Entity.Transaction.Model.FundTransaction;
 import com.example.BankingAppCRUD.Domain.Entity.Transaction.Ports.FundTransactionService;
 import com.example.BankingAppCRUD.Domain.ValueObject.AccountStatus;
 import com.example.BankingAppCRUD.Domain.ValueObject.Money;
 import com.example.BankingAppCRUD.Domain.ValueObject.Rate;
+import com.example.BankingAppCRUD.Domain.ValueObject.TransactionType;
 import com.example.BankingAppCRUD.Infrastructure.Repository.Account.CheckingAccountJPARepository;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Model.CheckingAccount;
 import com.example.BankingAppCRUD.Infrastructure.Config.Beans.NumberGeneratorBean;
@@ -26,32 +28,31 @@ import java.util.UUID;
 public class CheckingAccountServiceImpl implements AccountService<CheckingAccount> {
 
     private final CheckingAccountJPARepository checkingAccountRepository;
-    private  final InterestRateService interestRateService;
+    private final InterestRateService interestRateService;
     private final NumberGeneratorBean numberGeneratorBean;
     private final FundTransactionService fundTransactionService;
     private final SavingAccountJPARepository savingAccountRepository;
     private final AccountMapper accountMapper = new AccountMapper();
 
 
-
     @Autowired
     CheckingAccountServiceImpl(InterestRateService interestRateService,
                                CheckingAccountJPARepository checkingAccountRepository,
                                NumberGeneratorBean numberGeneratorBean,
-                               FundTransactionService fundTransactionService ,
+                               FundTransactionService fundTransactionService,
                                SavingAccountJPARepository savingAccountRepository) {
 
         this.checkingAccountRepository = checkingAccountRepository;
         this.interestRateService = interestRateService;
         this.numberGeneratorBean = numberGeneratorBean;
-        this.fundTransactionService =  fundTransactionService;
+        this.fundTransactionService = fundTransactionService;
         this.savingAccountRepository = savingAccountRepository;
 
 
     }
 
     @Override
-    public Response deposit (long amount , UUID id ) throws Exception {
+    public Response deposit(long amount, UUID id) throws Exception {
 
         if (amount <= 0)
             throw new Exception("Deposit must be greater than zero");
@@ -63,10 +64,7 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
             return Response.builder().responseCode("404").message("Account not found ").build();
 
 
-
-
         CheckingAccount account = optionalAccount.get();
-
 
 
         if (account.getAccount_status() != AccountStatus.ACTIVE)
@@ -79,10 +77,24 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
 
         try {
 
-            List<UUID>  currList = account.getAccount_transactions();
-            currList.add(UUID.fromString(this.fundTransactionService.createTransaction(id, amount, "Deposit").getMessage().toString()));
+            List<FundTransaction> currList = account.getAccount_transactions();
 
-            account.setAccount_transactions(currList);
+
+            FundTransaction transaction = FundTransaction.builder()
+                    .type(TransactionType.valueOf("DEPOSIT"))
+                    .amount(amount)
+                    .receiverID(id)
+                    .senderID(id)
+                    .build();
+
+
+            if (this.fundTransactionService.createTransaction(transaction.getId(), transaction.getAmount(),
+                    transaction.getType().toString()).getResponseCode().equals("200")) {
+                currList.add(transaction);
+                account.setAccount_transactions(currList);
+            }
+
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -96,57 +108,65 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
 
 
     @Override
-    public Response withdraw (long amount , UUID id ) throws Exception {
+    public Response withdraw(long amount, UUID id) throws Exception {
 
-          return checkingAccountRepository.findById(id).map(account -> {
+        return checkingAccountRepository.findById(id).map(account -> {
 
-              if (account.getAccount_status() != AccountStatus.ACTIVE)
-                  return Response.builder().responseCode("500").message("Account not active").build();
-
-
-              if (account.getBalance().getAmount() < amount && account.getDailyTransactionLimit().getAmount()  > amount  )
-                  return Response.builder().responseCode("500").message("Not enough funds or you have reached your daily transaction limit ").build();
-
-              Money newValue = Money.builder().currency("GBP").amount(account.getBalance().getAmount() - amount).build();
-
-              account.setBalance(newValue);
+            if (account.getAccount_status() != AccountStatus.ACTIVE)
+                return Response.builder().responseCode("500").message("Account not active").build();
 
 
-              try {
+            if (account.getBalance().getAmount() < amount && account.getDailyTransactionLimit().getAmount() > amount)
+                return Response.builder().responseCode("500").message("Not enough funds or you have reached your daily transaction limit ").build();
 
-                  List<UUID>  currList = account.getAccount_transactions();
-                  currList.add(UUID.fromString(this.fundTransactionService.createTransaction(id, amount, "Withdraw").getMessage().toString()));
+            Money newValue = Money.builder().currency("GBP").amount(account.getBalance().getAmount() - amount).build();
 
-                  account.setAccount_transactions(currList);
-              } catch (Exception e) {
-                  throw new RuntimeException(e);
-              }
+            account.setBalance(newValue);
 
 
-              this.checkingAccountRepository.save(account);
-              return Response.builder().responseCode("200").message("Success").build();
+            try {
+
+                List<FundTransaction> currList = account.getAccount_transactions();
 
 
+                FundTransaction transaction = FundTransaction.builder()
+                        .amount(amount)
+                        .receiverID(id)
+                        .senderID(id)
+                        .type(TransactionType.valueOf("WITHDRAW"))
+                        .build();
+               if (this.fundTransactionService.createTransaction(transaction.getId(), transaction.getAmount(), transaction.getType().toString())
+                       .getResponseCode().equals("200")){
 
-          }).orElseThrow(Exception :: new );
+                   account.setAccount_transactions(currList);
+               }
 
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+
+            this.checkingAccountRepository.save(account);
+            return Response.builder().responseCode("200").message("Success").build();
+
+
+        }).orElseThrow(Exception::new);
 
 
     }
 
 
-
-
     @Override
-    public Response transfer (long value , UUID  receiverId, UUID grantorId ) throws Exception  {
+    public Response transfer(long value, UUID receiverId, UUID grantorId) throws Exception {
 
 
-        if (value <= 0 )
+        if (value <= 0)
             throw new Exception("Please transfer a valid amount");
 
 
-        Optional<? extends Account> receiverOptionalAccount =  this.checkingAccountRepository.findById(receiverId);
-        Optional<? extends Account> grantorOptionalAccount =  this.checkingAccountRepository.findById(grantorId);
+        Optional<? extends Account> receiverOptionalAccount = this.checkingAccountRepository.findById(receiverId);
+        Optional<? extends Account> grantorOptionalAccount = this.checkingAccountRepository.findById(grantorId);
 
         if (receiverOptionalAccount.isEmpty())
             receiverOptionalAccount = this.savingAccountRepository.findById(receiverId);
@@ -164,12 +184,11 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
             return Response.builder().responseCode("404").message("Unable to find grantor account please check account number").build();
 
 
-
         Account reciverAccount = receiverOptionalAccount.get();
-        Account grantorAccount =  grantorOptionalAccount.get();
+        Account grantorAccount = grantorOptionalAccount.get();
 
-        withdraw(value , grantorId);
-        deposit(value , receiverId);
+        withdraw(value, grantorId);
+        deposit(value, receiverId);
 
         this.fundTransactionService.createTransaction(receiverId, grantorId, value);
 
@@ -180,25 +199,23 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
 
 
     @Override
-    public Response viewBalance (UUID id ) throws Exception  {
+    public Response viewBalance(UUID id) throws Exception {
 
-       return checkingAccountRepository.findById(id).map(account -> {
+        return checkingAccountRepository.findById(id).map(account -> {
 
-           if (account.getAccount_status() != AccountStatus.ACTIVE)
-               return Response.builder().responseCode("400").message("Account is not active").build();
+            if (account.getAccount_status() != AccountStatus.ACTIVE)
+                return Response.builder().responseCode("400").message("Account is not active").build();
 
-           return Response.builder().responseCode("200").message(account.getBalance().toString()).build();
+            return Response.builder().responseCode("200").message(account.getBalance().toString()).build();
 
-       }).orElseThrow(Exception :: new );
+        }).orElseThrow(Exception::new);
 
 
     }
 
 
-
-
     @Override
-    public Response setRate (UUID id , double value ) throws Exception {
+    public Response setRate(UUID id, double value) throws Exception {
 
         return checkingAccountRepository.findById(id).map(account -> {
 
@@ -213,19 +230,14 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
             return Response.builder().responseCode("200").message("Success new rate" + adjustedRate.getRateInfo() + "%").build();
 
 
-
-
-        }).orElseThrow(Exception :: new );
-
-
-
+        }).orElseThrow(Exception::new);
 
 
     }
 
 
     @Override
-    public Response updateAccountStatus  (String selection ,  UUID id  ) throws Exception  {
+    public Response updateAccountStatus(String selection, UUID id) throws Exception {
 
         if (selection == null || selection.isBlank())
             throw new Exception("Account not found");
@@ -242,7 +254,7 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
             return Response.builder().responseCode("400").message("account status not found").build();
         }
 
-        return  checkingAccountRepository.findById(id).map(account -> {
+        return checkingAccountRepository.findById(id).map(account -> {
 
             if (account == null || account.getAccount_status() != AccountStatus.ACTIVE)
                 return Response.builder().responseCode("404").message("account not found").build();
@@ -257,42 +269,29 @@ public class CheckingAccountServiceImpl implements AccountService<CheckingAccoun
         }).orElse(null);
 
 
-
-
-
     }
 
 
+    public Response applyRate(UUID id) throws Exception {
 
 
-    public Response applyRate (UUID id ) throws Exception {
+        return checkingAccountRepository.findById(id).map(account -> {
 
 
-
-            return  checkingAccountRepository.findById(id).map(account -> {
-
-
-                      long ratedValue =  account.getBalance().getAmount() * account.getRate().getRateInfo().longValue();
+            long ratedValue = account.getBalance().getAmount() * account.getRate().getRateInfo().longValue();
 
 
-                       Money rateAppliedBalance = Money.builder().amount(account.getBalance().getAmount() + ratedValue).build();
-                        account.setBalance(rateAppliedBalance);
+            Money rateAppliedBalance = Money.builder().amount(account.getBalance().getAmount() + ratedValue).build();
+            account.setBalance(rateAppliedBalance);
 
 
-                return Response.builder().responseCode("200").message("Rate applied").build();
+            return Response.builder().responseCode("200").message("Rate applied").build();
 
 
-            }).orElseThrow(Exception :: new );
+        }).orElseThrow(Exception::new);
 
 
-
-
-        }
-
-
-
-
-
+    }
 
 
 }

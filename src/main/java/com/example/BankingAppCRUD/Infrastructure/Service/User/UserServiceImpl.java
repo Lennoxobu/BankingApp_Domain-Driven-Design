@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -86,10 +86,7 @@ public class UserServiceImpl implements UserService {
                     .build();
 
 
-
             this.userJPARepository.save(user);
-
-
             return Response.builder().responseCode("200").message("Success - User account created").build();
 
 
@@ -103,12 +100,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response  deleteUser ( UUID id ) {
 
+        if (this.userJPARepository.existsById(id)) {
+            User user  = this.userJPARepository.findById(id)
+                    .get();
 
 
-        this.userJPARepository.deleteById(id);
+            user.setDeleted(true);
 
-        if (!this.userJPARepository.existsById(id)) {
+            this.userJPARepository.save(user);
             return Response.builder().responseCode("200").message("Success user removed ").build();
+
         } else {
             return Response.builder().responseCode("500").message("Error with deleting user").build();
         }
@@ -182,14 +183,25 @@ public class UserServiceImpl implements UserService {
 
         boolean deleted = false;
 
+
         if (savingAccountRepository.existsById(id)) {
-            savingAccountRepository.deleteById(id);
-            deleted = true;
+
+          SavingAccount account = savingAccountRepository.findById(id)
+                    .get();
+                account.setDeleted(true);
+
+            deleted = account.isDeleted();
         }
 
         if (checkingAccountRepository.existsById(id)) {
-            checkingAccountRepository.deleteById(id);
-            deleted = true;
+
+
+            CheckingAccount account = checkingAccountRepository.findById(id)
+                    .get();
+
+            account.setDeleted(true);
+
+            deleted = account.isDeleted();
         }
 
         if (deleted) {
@@ -200,10 +212,12 @@ public class UserServiceImpl implements UserService {
         } else {
             return Response.builder()
                     .responseCode("404")
-                    .message("Account not found")
+                    .message("Account not found account not deleted ")
                     .build();
         }
     }
+
+
 
 
     @Override
@@ -269,7 +283,7 @@ public class UserServiceImpl implements UserService {
 
         return userJPARepository.findById(id)
                 .map(user -> user.getAccountIds().stream()
-                        .map(this::mapAccountIdToDto)
+                        .map(account -> mapAccountIdToDto(account.getId()))
                         .flatMap(Optional::stream)
                         .toList()
                 )

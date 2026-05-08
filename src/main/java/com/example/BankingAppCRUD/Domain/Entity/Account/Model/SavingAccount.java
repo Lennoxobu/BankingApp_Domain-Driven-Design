@@ -15,8 +15,9 @@ import java.sql.Timestamp;
 @Setter
 @Table(name="_SavingAccount")
 @ToString
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Where(clause= "deleted = false" )
 @Entity
 public class SavingAccount extends Account {
@@ -31,8 +32,8 @@ public class SavingAccount extends Account {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "amount", column = @Column(name = "name = interest_accured_amount")),
-            @AttributeOverride(name = "currency", column = @Column(name = "name = interest_accured_currency"))
+            @AttributeOverride(name = "amount", column = @Column(name = "interest_accured_amount")),
+            @AttributeOverride(name = "currency", column = @Column(name = "interest_accured_currency"))
 
     })
     private Money interestAccrued;

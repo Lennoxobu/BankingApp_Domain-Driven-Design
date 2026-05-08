@@ -4,9 +4,10 @@ import com.example.BankingAppCRUD.Application.DTOs.Requests.User.UserDTO;
 import com.example.BankingAppCRUD.Domain.Entity.User.Model.User;
 import org.springframework.beans.BeanUtils;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class UserMapper extends BaseMapper <User , UserDTO >{
+public class UserMapper extends BaseMapper <User , UserDTO >  {
 
     @Override
     public User convertToEntity(UserDTO dto, Object... args) {
