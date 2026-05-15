@@ -1,12 +1,15 @@
 package com.example.BankingAppCRUD.Domain.ValueObject;
 
 
+import com.example.BankingAppCRUD.Domain.HibernateInstantiator.MoneyInstantiator;
+import com.example.BankingAppCRUD.Domain.HibernateInstantiator.RateInstantiator;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.annotations.EmbeddableInstantiator;
 
 import java.sql.Timestamp;
 
@@ -19,6 +22,7 @@ import java.sql.Timestamp;
         @AttributeOverride(name = "rateInfo" , column  = @Column(name = "rate_info")),
         @AttributeOverride(name = "lastUpdated" , column = @Column (name = "rate_lastUpdated"))
 })
+@EmbeddableInstantiator(RateInstantiator.class)
 public class Rate {
 
 

@@ -1,12 +1,15 @@
 package com.example.BankingAppCRUD.Domain.ValueObject;
 
 
+import com.example.BankingAppCRUD.Domain.HibernateInstantiator.DebitInfoInstantiator;
+import com.example.BankingAppCRUD.Domain.HibernateInstantiator.MoneyInstantiator;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.annotations.EmbeddableInstantiator;
 
 import java.sql.Timestamp;
 
@@ -19,6 +22,7 @@ import java.sql.Timestamp;
         @AttributeOverride(name = "debit_info_expiryDate" , column = @Column(name = "debit_info_expiryDate" )),
         @AttributeOverride(name = "debit_info_issueDate",  column = @Column (name = "debit_info_issueDate"))
 })
+@EmbeddableInstantiator(DebitInfoInstantiator.class)
 public class DebitInfo {
 
     private final String debitCardPin_hashed ;

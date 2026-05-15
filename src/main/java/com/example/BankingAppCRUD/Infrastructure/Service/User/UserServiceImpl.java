@@ -146,7 +146,6 @@ public class UserServiceImpl implements UserService {
 
             } else if (accountType.equals("saving")) {
                 SavingAccount account = SavingAccount.builder()
-                        .rate(Rate.builder().rateInfo(this.interestRateService.getInterestRate().block(Duration.ofSeconds(4))).country("UK").lastUpdated(Timestamp.from(Instant.now())).build())
                         .account_status(AccountStatus.ACTIVE)
                         .createdAt(Timestamp.from(Instant.now()))
                         .balance(Money.builder().currency("GBP").amount(Long.valueOf((long) 0.00)).build())
@@ -154,6 +153,7 @@ public class UserServiceImpl implements UserService {
                         .account_transactions(new ArrayList<>())
                         .interestAccrued(Money.builder().currency("GBP").amount((long) 300.00).build())
                         .minBalance(Money.builder().currency("GBP").amount((long) 300.00).build())
+                        .rate(Rate.builder().rateInfo(this.interestRateService.getInterestRate().block(Duration.ofSeconds(2))).country("UK").lastUpdated(Timestamp.from(Instant.now())).build())
                         .compoundFrequency(Frequency.YEARLY)
                         .lastInterestedAppliedAt(Timestamp.from(Instant.now()))
                         .build();
