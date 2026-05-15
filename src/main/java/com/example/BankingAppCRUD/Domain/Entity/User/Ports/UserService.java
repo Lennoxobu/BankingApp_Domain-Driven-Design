@@ -14,9 +14,9 @@ public interface UserService {
 
     Response register (UserDTO user) throws Exception;
 
-    Response createAccount (AccountDTO account ) throws Exception;
+    Response createAccount (AccountDTO account ,  UUID userId ) throws Exception;
 
-    Response deleteAccount (UUID id );
+    Response deleteAccount (UUID id ,  UUID userId  );
 
     Response deleteUser (UUID id) throws Exception;
 
@@ -26,7 +26,7 @@ public interface UserService {
 
     Response changeName (UUID id , String firstName , String lastName ) throws Exception;
 
-    List<AccountDTO>  getAccounts (UUID id  ) throws Exception;
+    List<AccountDTO>  getAccounts (UUID userId  ) throws Exception;
 
     Response setRole (String value , UUID id );
 

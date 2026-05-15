@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -168,12 +169,22 @@ public class UserController {
 
         try {
             AccountDTO accountDTO = AccountDTO.builder()
-                    .accountType(request.getAccountType())
+                    .accountType(request.getAccountType().toLowerCase())
                     .build();
 
-            Response response = userService.createAccount(accountDTO);
-            logger.info("Successfully created account for userId: {} [correlationId: {}]", userId, correlationId);
-            return ResponseEntity.ok(response);
+            Response response = userService.createAccount(accountDTO , userId);
+
+
+
+
+            if (response.getResponseCode().equals("200")) {
+                logger.info("Successfully created account for userId: {} [correlationId: {}]", userId, correlationId);
+                return ResponseEntity.ok(response);
+            }
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(response);
+
 
         } catch (Exception e) {
             logger.error("Error creating account for userId: {} [correlationId: {}]", userId, correlationId, e);
@@ -200,7 +211,7 @@ public class UserController {
         logger.info("Deleting account {} for userId: {} [correlationId: {}]", accountId, userId, correlationId);
 
         try {
-            Response response = userService.deleteAccount(accountId);
+            Response response = userService.deleteAccount(accountId , UUID.randomUUID());
             logger.info("Successfully deleted account {} for userId: {} [correlationId: {}]", accountId, userId, correlationId);
             return ResponseEntity.ok(response);
 

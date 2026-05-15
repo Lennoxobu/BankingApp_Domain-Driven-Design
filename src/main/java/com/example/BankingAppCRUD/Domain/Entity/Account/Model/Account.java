@@ -2,6 +2,7 @@ package com.example.BankingAppCRUD.Domain.Entity.Account.Model;
 
 
 import com.example.BankingAppCRUD.Domain.Entity.Transaction.Model.FundTransaction;
+import com.example.BankingAppCRUD.Domain.Entity.User.Model.User;
 import com.example.BankingAppCRUD.Domain.ValueObject.AccountInfo;
 import com.example.BankingAppCRUD.Domain.ValueObject.AccountStatus;
 import com.example.BankingAppCRUD.Domain.ValueObject.Money;
@@ -35,6 +36,11 @@ public abstract class Account {
     protected AccountInfo info;
 
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id" , columnDefinition = "uuid")
+    private User user;
+
+
     @Embedded
     @AttributeOverride(name = "amount" , column = @Column(name = "balance_amount"))
     @AttributeOverride(name = "currency" , column = @Column(name = "balance_currency"))
@@ -52,7 +58,7 @@ public abstract class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(SqlTypes.UUID)
-    @NonNull
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     protected UUID id;
 
 

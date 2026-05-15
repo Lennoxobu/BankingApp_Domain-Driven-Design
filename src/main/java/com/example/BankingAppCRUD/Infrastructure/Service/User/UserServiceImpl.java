@@ -15,8 +15,6 @@ import com.example.BankingAppCRUD.Infrastructure.Config.Beans.NumberGeneratorBea
 import com.example.BankingAppCRUD.Infrastructure.Config.InterestRate.InterestRateService;
 import com.example.BankingAppCRUD.Infrastructure.Repository.Account.CheckingAccountJPARepository;
 import com.example.BankingAppCRUD.Infrastructure.Repository.Account.SavingAccountJPARepository;
-import com.example.BankingAppCRUD.Infrastructure.Service.Account.CheckingAccountServiceImpl;
-import com.example.BankingAppCRUD.Infrastructure.Service.Account.SavingAccountServiceImpl;
 import com.example.BankingAppCRUD.Domain.Entity.User.Model.User;
 
 import com.example.BankingAppCRUD.Infrastructure.Repository.User.UserJPARepository;
@@ -27,6 +25,7 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,8 +35,6 @@ public class UserServiceImpl implements UserService {
 
 
     private final UserJPARepository userJPARepository;
-    private final CheckingAccountServiceImpl checkingAccountServiceImpl;
-    private final SavingAccountServiceImpl savingAccountServiceImpl;
     private final AccountMapper accountMapper;
     private final NumberGeneratorBean numberGeneratorBean;
     private final InterestRateService interestRateService;
@@ -46,62 +43,52 @@ public class UserServiceImpl implements UserService {
     private final SavingAccountJPARepository savingAccountRepository;
 
 
-
     @Autowired
-    UserServiceImpl(UserJPARepository userJPARepository, CheckingAccountServiceImpl checkingAccountServiceImpl,
-                    SavingAccountServiceImpl savingAccountServiceImpl, NumberGeneratorBean numberGeneratorBean
-                , InterestRateService interestRateService, CheckingAccountJPARepository checkingAccountRepository,
+    UserServiceImpl(UserJPARepository userJPARepository, NumberGeneratorBean numberGeneratorBean
+            , InterestRateService interestRateService, CheckingAccountJPARepository checkingAccountRepository,
                     SavingAccountJPARepository savingAccountRepository) {
 
         this.userJPARepository = userJPARepository;
-        this.checkingAccountServiceImpl = checkingAccountServiceImpl;
-        this.savingAccountServiceImpl = savingAccountServiceImpl;
         this.userMapper = new UserMapper();
-        this.accountMapper =  new AccountMapper();
+        this.accountMapper = new AccountMapper();
         this.numberGeneratorBean = numberGeneratorBean;
         this.interestRateService = interestRateService;
         this.checkingAccountRepository = checkingAccountRepository;
         this.savingAccountRepository = savingAccountRepository;
 
 
-
-
     }
 
     @Override
-    public Response register (UserDTO dto) throws Exception {
+    public Response register(UserDTO dto) throws Exception {
 
 
-            //Need to implement the password charger method
-            User user = User.builder()
-                    .createdAt(Timestamp.from(Instant.now()))
-                    .user_address(dto.address())
-                    .user_email(dto.email())
-                    .user_roles(List.of(Role.USER))
-                    .username(dto.userName())
-                    .lastLoginAt(Timestamp.from(Instant.now()))
-                    .user_name(Name.builder().first(dto.firstName()).last(dto.lastName()).knownAs(dto.firstName()).build())
-                    .accountIds(List.of())
-                    .status(AccountStatus.ACTIVE)
-                    .build();
+        //Need to implement the password charger method
+        User user = User.builder()
+                .createdAt(Timestamp.from(Instant.now()))
+                .user_address(dto.address())
+                .user_email(dto.email())
+                .user_roles(List.of(Role.USER))
+                .username(dto.userName())
+                .lastLoginAt(Timestamp.from(Instant.now()))
+                .user_name(Name.builder().first(dto.firstName()).last(dto.lastName()).knownAs(dto.firstName()).build())
+                .accountIds(List.of())
+                .status(AccountStatus.ACTIVE)
+                .build();
 
 
-            this.userJPARepository.save(user);
-            return Response.builder().responseCode("200").message("Success - User account created").build();
-
-
+        this.userJPARepository.save(user);
+        return Response.builder().responseCode("200").message("Success - User account created").build();
 
 
     }
 
 
-
-
     @Override
-    public Response  deleteUser ( UUID id ) {
+    public Response deleteUser(UUID id) {
 
         if (this.userJPARepository.existsById(id)) {
-            User user  = this.userJPARepository.findById(id)
+            User user = this.userJPARepository.findById(id)
                     .get();
 
 
@@ -117,94 +104,116 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-
     @Override
-    public Response createAccount  (AccountDTO accountRequest) throws Exception {
+    public Response createAccount(AccountDTO accountRequest, UUID userId) throws Exception {
 
 
-        String accountType = accountRequest.accountType().toString().toLowerCase();
+        User userAccount = this.userJPARepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("User not found please call this method with a registered user"));
 
 
-        if (accountType == "checking") {
+        if (!userAccount.isDeleted() && userAccount.getStatus().equals(AccountStatus.ACTIVE)) {
+            String accountType = accountRequest.accountType().toLowerCase();
 
 
-            CheckingAccount account =  CheckingAccount.builder()
-                    .balance(Money.builder().currency("GBP").amount(Long.valueOf((long) 0.00)).build())
-                    .dailyTransactionLimit(Money.builder().currency("GBP").amount(Long.valueOf((long) 300.00)).build())
-                    .createdAt(Timestamp.from(Instant.now()))
-                    .account_status(AccountStatus.ACTIVE)
-                    .id(UUID.randomUUID())
-                    .account_transactions(List.of(null))
-                    .info(AccountInfo.builder().accountNo(this.numberGeneratorBean.generateAccountNumber()).sortCode(this.numberGeneratorBean.generateSortCodeNo()).build())
-                    .debitCardInfo(DebitInfo.builder().debitCardNo_hashed(String.valueOf(this.numberGeneratorBean.generateDebitCardNo())).debitCardPin_hashed(String.valueOf(this.numberGeneratorBean.generateDebitCardPin())).issueDate(Timestamp.from(Instant.now()))
-                            .expiryDate(Timestamp.from(Instant.MAX)).build())
-                    .rate(Rate.builder().country("UK").rateInfo(this.interestRateService.getInterestRate().block(Duration.ofSeconds(1)))
-                            .lastUpdated(Timestamp.from(Instant.now())).build())
-                    .monthlyFee(Money.builder().currency("GBP").amount((long) 0.10).build())
-                    .overDraftLimit(Money.builder().currency("GBP").amount((long) 250.00).build())
-                    .build();
-            this.checkingAccountRepository.save(account);
 
-            return checkingAccountRepository.findById(account.getId()).map(gottenAcc -> Response.builder().responseCode("200")
-                    .message("Success - Account created").build()).orElseThrow(Exception :: new );
-        } else if (accountType == "saving") {
-            SavingAccount account = SavingAccount.builder()
-                    .id(UUID.randomUUID())
-                    .rate(Rate.builder().rateInfo(this.interestRateService.getInterestRate().block(Duration.ofSeconds(1))).country("UK").lastUpdated(Timestamp.from(Instant.now())).build())
-                    .account_status(AccountStatus.ACTIVE)
-                    .createdAt(Timestamp.from(Instant.now()))
-                    .balance(Money.builder().currency("GBP").amount(Long.valueOf((long) 0.00)).build())
-                    .info(AccountInfo.builder().accountNo(this.numberGeneratorBean.generateAccountNumber()).sortCode(this.numberGeneratorBean.generateSortCodeNo()).build())
-                    .account_transactions(List.of(null))
-                    .interestAccrued(Money.builder().currency("GBP").amount((long)300.00).build())
-                    .minBalance(Money.builder().currency("GBP").amount((long)300.00).build())
-                    .compoundFrequency(Frequency.YEARLY)
-                    .lastInterestedAppliedAt(Timestamp.from(Instant.now()))
-                    .build();
+            if (accountType.equals("checking")) {
+
+                CheckingAccount account = CheckingAccount.builder()
+                        .balance(Money.builder().currency("GBP").amount(Long.valueOf((long) 0.00)).build())
+                        .dailyTransactionLimit(Money.builder().currency("GBP").amount(Long.valueOf((long) 300.00)).build())
+                        .createdAt(Timestamp.from(Instant.now()))
+                        .account_status(AccountStatus.ACTIVE)
+                        .account_transactions(new ArrayList<>())
+                        .info(AccountInfo.builder().accountNo(this.numberGeneratorBean.generateAccountNumber()).sortCode(this.numberGeneratorBean.generateSortCodeNo()).build())
+                        .debitCardInfo(DebitInfo.builder().debitCardNo_hashed(String.valueOf(this.numberGeneratorBean.generateDebitCardNo())).debitCardPin_hashed(String.valueOf(this.numberGeneratorBean.generateDebitCardPin())).issueDate(Timestamp.from(Instant.now()))
+                                .expiryDate(Timestamp.from(Instant.MAX)).build())
+                        .rate(Rate.builder().country("UK").rateInfo(this.interestRateService.getInterestRate().block(Duration.ofSeconds(1)))
+                                .lastUpdated(Timestamp.from(Instant.now())).build())
+                        .monthlyFee(Money.builder().currency("GBP").amount((long) 0.10).build())
+                        .overDraftLimit(Money.builder().currency("GBP").amount((long) 250.00).build())
+                        .build();
+
+                userAccount.getAccountIds().add(account);
+                account.setUser(userAccount);
+                this.userJPARepository.save(userAccount);
+                this.checkingAccountRepository.save(account);
 
 
-            this.savingAccountRepository.save(account);
 
-            return savingAccountRepository.findById(account.getId()).map(gottenAcc -> Response.builder().responseCode("200")
-                    .message("Success - Account created").build()).orElseThrow(Exception :: new );
+                return checkingAccountRepository.findById(account.getId()).map(gottenAcc -> Response.builder().responseCode("200")
+                        .message("Success - Account created").build()).orElseThrow(Exception::new);
+
+            } else if (accountType.equals("saving")) {
+                SavingAccount account = SavingAccount.builder()
+                        .rate(Rate.builder().rateInfo(this.interestRateService.getInterestRate().block(Duration.ofSeconds(4))).country("UK").lastUpdated(Timestamp.from(Instant.now())).build())
+                        .account_status(AccountStatus.ACTIVE)
+                        .createdAt(Timestamp.from(Instant.now()))
+                        .balance(Money.builder().currency("GBP").amount(Long.valueOf((long) 0.00)).build())
+                        .info(AccountInfo.builder().accountNo(this.numberGeneratorBean.generateAccountNumber()).sortCode(this.numberGeneratorBean.generateSortCodeNo()).build())
+                        .account_transactions(new ArrayList<>())
+                        .interestAccrued(Money.builder().currency("GBP").amount((long) 300.00).build())
+                        .minBalance(Money.builder().currency("GBP").amount((long) 300.00).build())
+                        .compoundFrequency(Frequency.YEARLY)
+                        .lastInterestedAppliedAt(Timestamp.from(Instant.now()))
+                        .build();
 
 
+                userAccount.getAccountIds().add(account);
+                account.setUser(userAccount);
+                this.userJPARepository.save(userAccount);
+                this.savingAccountRepository.save(account);
+
+                return savingAccountRepository.findById(account.getId()).map(gottenAcc -> Response.builder().responseCode("200")
+                        .message("Success - Account created").build()).orElseThrow(Exception::new);
+
+
+            } else {
+                return Response.builder().responseCode("500").message("Error in account creation").build();
+            }
         } else {
             return Response.builder().responseCode("500").message("Error in account creation").build();
         }
-
-
     }
 
 
+
     @Override
-    public Response deleteAccount(UUID id) {
+    public Response deleteAccount(UUID id, UUID userId) {
+
+
+        var userAccount = this.userJPARepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("User not found please call this method with a registered user "));
+
 
         boolean deleted = false;
 
+        if (savingAccountRepository.existsById(id) && userAccount.getAccountIds().contains(id)) {
 
-        if (savingAccountRepository.existsById(id)) {
-
-          SavingAccount account = savingAccountRepository.findById(id)
+            SavingAccount account = savingAccountRepository.findById(id)
                     .get();
-                account.setDeleted(true);
+            account.setDeleted(true);
+
+            userAccount.getAccountIds().remove(id);
 
             deleted = account.isDeleted();
         }
 
-        if (checkingAccountRepository.existsById(id)) {
-
+        if (checkingAccountRepository.existsById(id) && userAccount.getAccountIds().contains(id)) {
 
             CheckingAccount account = checkingAccountRepository.findById(id)
                     .get();
 
             account.setDeleted(true);
 
+            userAccount.getAccountIds().remove(id);
+
             deleted = account.isDeleted();
         }
 
         if (deleted) {
+
+            this.userJPARepository.save(userAccount);
             return Response.builder()
                     .responseCode("200")
                     .message("Account deleted successfully")
@@ -215,13 +224,13 @@ public class UserServiceImpl implements UserService {
                     .message("Account not found account not deleted ")
                     .build();
         }
+
+
     }
 
 
-
-
     @Override
-    public Response changeEmail (String value, UUID id ) {
+    public Response changeEmail(String value, UUID id) {
 
         return userJPARepository.findById(id).map(account -> {
 
@@ -230,14 +239,11 @@ public class UserServiceImpl implements UserService {
         }).orElse(Response.builder().responseCode("400").message("Error is changing email").build());
 
 
-
-
     }
 
 
-
     @Override
-    public Response changeAddress (String value, UUID id ) {
+    public Response changeAddress(String value, UUID id) {
         return userJPARepository.findById(id).map(account -> {
             account.setUser_address(value);
             return Response.builder().responseCode("200").message("Success address changed").build();
@@ -246,19 +252,19 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Response changeName (UUID id , String firstName , String lastName ) {
+    public Response changeName(UUID id, String firstName, String lastName) {
 
-        if (firstName ==  null  || firstName.length() < 2)
+        if (firstName == null || firstName.length() < 2)
             return Response.builder().responseCode("500").message("Incorrect First name given please check entry").build();
 
 
-        if (lastName == null ||  lastName.length() < 2 )
-                return Response.builder().responseCode("500").message("Incorrect Last name given please check entry").build();
+        if (lastName == null || lastName.length() < 2)
+            return Response.builder().responseCode("500").message("Incorrect Last name given please check entry").build();
 
 
         Name newName = Name.builder().first(firstName).last(lastName).build();
 
-       return  userJPARepository.findById(id).map(user -> {
+        return userJPARepository.findById(id).map(user -> {
             user.setUser_name(newName);
 
             return Response.builder().responseCode("200").message("Success name changed completed").build();
@@ -278,7 +284,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<AccountDTO> getAccounts (UUID id ) {
+    public List<AccountDTO> getAccounts(UUID id) {
 
 
         return userJPARepository.findById(id)
@@ -291,13 +297,11 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-
     @Override
-    public Response setRole (String value , UUID id ) {
+    public Response setRole(String value, UUID id) {
 
         if (value == null || value.isBlank())
-                return Response.builder().responseCode("500").message("Role not selected string not passed").build();
+            return Response.builder().responseCode("500").message("Role not selected string not passed").build();
 
 
         return userJPARepository.findById(id).map(user -> {
@@ -312,11 +316,8 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-
-
     @Override
-    public Response changeStatus (UUID id ,String value ) {
+    public Response changeStatus(UUID id, String value) {
 
         if (value == null || value.isBlank())
             return Response.builder().responseCode("500").message("Status not selected string not passed").build();
@@ -324,8 +325,10 @@ public class UserServiceImpl implements UserService {
 
         return userJPARepository.findById(id).map(user -> {
 
-            user.setStatus(AccountStatus.valueOf(value.toLowerCase()));
+            user.setStatus(AccountStatus.valueOf(value.toUpperCase()));
 
+
+            userJPARepository.save(user);
 
             return Response.builder().responseCode("200").message("Status change complete").build();
         }).orElseThrow(() -> new RuntimeException("Status not changed error"));
@@ -339,8 +342,6 @@ public class UserServiceImpl implements UserService {
 //        return new UserResponseWithCredentials(this.userMapper.convertToDto(user), user.getHashed_password());
 //
 //    }
-
-
 
 
 }
