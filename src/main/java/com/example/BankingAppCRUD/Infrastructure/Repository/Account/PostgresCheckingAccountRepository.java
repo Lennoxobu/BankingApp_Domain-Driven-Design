@@ -1,6 +1,5 @@
 package com.example.BankingAppCRUD.Infrastructure.Repository.Account;
 
-import com.example.BankingAppCRUD.Application.Response.Response;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Model.CheckingAccount;
 import com.example.BankingAppCRUD.Domain.Entity.Account.Ports.AccountRepository;
 import com.example.BankingAppCRUD.Domain.ValueObject.Money;

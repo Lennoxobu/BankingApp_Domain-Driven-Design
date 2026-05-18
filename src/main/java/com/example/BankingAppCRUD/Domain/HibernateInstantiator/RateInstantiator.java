@@ -17,8 +17,8 @@ public class RateInstantiator extends AbstractEmbeddableInstantiator<Rate> {
     public Object instantiate(ValueAccess valueAccess, SessionFactoryImplementor sessionFactoryImplementor) {
         return Rate.builder()
                 .country(valueAccess.getValue(0, String.class))
-                .rateInfo(valueAccess.getValue(1, Double.class))
-                .lastUpdated(valueAccess.getValue(2, Timestamp.class))
+                .lastUpdated(valueAccess.getValue(1, Timestamp.class))
+                .rateInfo(valueAccess.getValue(2, Double.class))
                 .build();
     }
 }

@@ -7,6 +7,7 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.EmbeddableInstantiator;
@@ -16,6 +17,7 @@ import java.sql.Timestamp;
 @Data
 @Builder
 @Embeddable
+@AllArgsConstructor
 @AttributeOverrides( {
         @AttributeOverride(name = "debit_info_cardPin", column = @Column(name = "debit_info_cardPin")),
         @AttributeOverride(name = "debit_info_cardNo" , column = @Column (name = "debit_info_cardNo")),

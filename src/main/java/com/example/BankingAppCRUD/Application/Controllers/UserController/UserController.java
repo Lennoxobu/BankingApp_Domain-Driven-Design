@@ -21,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -211,9 +210,10 @@ public class UserController {
         logger.info("Deleting account {} for userId: {} [correlationId: {}]", accountId, userId, correlationId);
 
         try {
-            Response response = userService.deleteAccount(accountId , UUID.randomUUID());
-            logger.info("Successfully deleted account {} for userId: {} [correlationId: {}]", accountId, userId, correlationId);
-            return ResponseEntity.ok(response);
+            Response response = userService.deleteAccount(accountId , userId);
+
+                logger.info("Successfully deleted account {} for userId: {} [correlationId: {}]", accountId, userId, correlationId);
+                return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             logger.error("Error deleting account {} for userId: {} [correlationId: {}]", accountId, userId, correlationId, e);

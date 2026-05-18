@@ -3,6 +3,9 @@ package com.example.BankingAppCRUD.Infrastructure.Service.User;
 import com.example.BankingAppCRUD.Application.DTOs.Requests.Account.AccountDTO;
 import com.example.BankingAppCRUD.Application.DTOs.Requests.User.UserDTO;
 //import com.example.BankingAppCRUD.Infrastructure.Config.Security.DTOs.UserResponseWithCredentials;
+import com.example.BankingAppCRUD.Application.Exceptions.AccountActionFailedException;
+import com.example.BankingAppCRUD.Application.Exceptions.AccountNotActiveException;
+import com.example.BankingAppCRUD.Application.Exceptions.AccountNotFoundException;
 import com.example.BankingAppCRUD.Application.Mappers.AccountMapper;
 import com.example.BankingAppCRUD.Application.Mappers.UserMapper;
 import com.example.BankingAppCRUD.Application.Response.Response;
@@ -25,10 +28,7 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -87,20 +87,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response deleteUser(UUID id) {
 
-        if (this.userJPARepository.existsById(id)) {
-            User user = this.userJPARepository.findById(id)
-                    .get();
+
+        User user = userJPARepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException("User account not found, please make sure user is registered."));
 
 
+        if (!user.isDeleted()) {
             user.setDeleted(true);
 
             this.userJPARepository.save(user);
             return Response.builder().responseCode("200").message("Success user removed ").build();
-
-        } else {
-            return Response.builder().responseCode("500").message("Error with deleting user").build();
         }
 
+        throw new AccountActionFailedException("User account was either already deleted or operation failed please check user details. ");
     }
 
 
@@ -116,29 +115,29 @@ public class UserServiceImpl implements UserService {
             String accountType = accountRequest.accountType().toLowerCase();
 
 
-
             if (accountType.equals("checking")) {
 
                 CheckingAccount account = CheckingAccount.builder()
-                        .balance(Money.builder().currency("GBP").amount(Long.valueOf((long) 0.00)).build())
-                        .dailyTransactionLimit(Money.builder().currency("GBP").amount(Long.valueOf((long) 300.00)).build())
+                        .balance(Money.builder().amount(Long.valueOf((long) 0.00)).currency("GBP").build())
+                        .dailyTransactionLimit(Money.builder().amount(Long.valueOf((long) 300.00)).currency("GBP").build())
                         .createdAt(Timestamp.from(Instant.now()))
                         .account_status(AccountStatus.ACTIVE)
                         .account_transactions(new ArrayList<>())
                         .info(AccountInfo.builder().accountNo(this.numberGeneratorBean.generateAccountNumber()).sortCode(this.numberGeneratorBean.generateSortCodeNo()).build())
-                        .debitCardInfo(DebitInfo.builder().debitCardNo_hashed(String.valueOf(this.numberGeneratorBean.generateDebitCardNo())).debitCardPin_hashed(String.valueOf(this.numberGeneratorBean.generateDebitCardPin())).issueDate(Timestamp.from(Instant.now()))
-                                .expiryDate(Timestamp.from(Instant.MAX)).build())
-                        .rate(Rate.builder().country("UK").rateInfo(this.interestRateService.getInterestRate().block(Duration.ofSeconds(1)))
-                                .lastUpdated(Timestamp.from(Instant.now())).build())
-                        .monthlyFee(Money.builder().currency("GBP").amount((long) 0.10).build())
-                        .overDraftLimit(Money.builder().currency("GBP").amount((long) 250.00).build())
+                        .debitCardInfo(DebitInfo.builder().debitCardPin_hashed(String.valueOf(this.numberGeneratorBean.generateDebitCardPin())).debitCardNo_hashed(String.valueOf(this.numberGeneratorBean.generateDebitCardNo()))
+                                .expiryDate(Timestamp.from(Instant.now().plusSeconds(315_576_000))) // 10 years from now
+                                .issueDate(Timestamp.from(Instant.now()))
+                                .build())
+                        .rate(Rate.builder().country("UK").lastUpdated(Timestamp.from(Instant.now()))
+                                .rateInfo(this.interestRateService.getInterestRate().block(Duration.ofSeconds(2))).build())
+                        .monthlyFee(Money.builder().amount((long) 0.10).currency("GBP").build())
+                        .overDraftLimit(Money.builder().amount((long) 250.00).currency("GBP").build())
                         .build();
 
                 userAccount.getAccountIds().add(account);
                 account.setUser(userAccount);
                 this.userJPARepository.save(userAccount);
                 this.checkingAccountRepository.save(account);
-
 
 
                 return checkingAccountRepository.findById(account.getId()).map(gottenAcc -> Response.builder().responseCode("200")
@@ -148,12 +147,14 @@ public class UserServiceImpl implements UserService {
                 SavingAccount account = SavingAccount.builder()
                         .account_status(AccountStatus.ACTIVE)
                         .createdAt(Timestamp.from(Instant.now()))
-                        .balance(Money.builder().currency("GBP").amount(Long.valueOf((long) 0.00)).build())
+                        .balance(Money.builder().amount(Long.valueOf((long) 0.00)).currency("GBP").build())
                         .info(AccountInfo.builder().accountNo(this.numberGeneratorBean.generateAccountNumber()).sortCode(this.numberGeneratorBean.generateSortCodeNo()).build())
                         .account_transactions(new ArrayList<>())
-                        .interestAccrued(Money.builder().currency("GBP").amount((long) 300.00).build())
-                        .minBalance(Money.builder().currency("GBP").amount((long) 300.00).build())
-                        .rate(Rate.builder().rateInfo(this.interestRateService.getInterestRate().block(Duration.ofSeconds(2))).country("UK").lastUpdated(Timestamp.from(Instant.now())).build())
+                        .interestAccrued(Money.builder().amount((long) 300.00).currency("GBP").build())
+                        .minBalance(Money.builder().amount((long) 300.00).currency("GBP").build())
+                        .rate(Rate.builder().country("UK").lastUpdated(Timestamp.from(Instant.now()))
+                                .rateInfo(this.interestRateService.getInterestRate().block(Duration.ofSeconds(2))).build())
+                        .interestRate(Rate.builder().country("GBP").lastUpdated(Timestamp.from(Instant.now())).rateInfo(Double.valueOf(0.4)).build())
                         .compoundFrequency(Frequency.YEARLY)
                         .lastInterestedAppliedAt(Timestamp.from(Instant.now()))
                         .build();
@@ -177,53 +178,52 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
-    public Response deleteAccount(UUID id, UUID userId) {
+    public Response deleteAccount(UUID id, UUID userId) throws RuntimeException {
 
 
         var userAccount = this.userJPARepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("User not found please call this method with a registered user "));
+                .orElseThrow(() -> new AccountNotFoundException("User not found please call this method with a registered user "));
 
 
-        boolean deleted = false;
+        if (savingAccountRepository.existsById(id)) {
 
-        if (savingAccountRepository.existsById(id) && userAccount.getAccountIds().contains(id)) {
+            userAccount.getAccountIds()
+                    .forEach(account -> {
+                        if (account.getId().equals(id)) {
 
-            SavingAccount account = savingAccountRepository.findById(id)
-                    .get();
-            account.setDeleted(true);
+                            account.setDeleted(true);
+                            userAccount.getAccountIds().remove(account);
 
-            userAccount.getAccountIds().remove(id);
+                            if (!account.isDeleted())
+                                throw new AccountActionFailedException("Account action failed: Account maybe deleted or operation failed");
+                        }
 
-            deleted = account.isDeleted();
-        }
+                    });
 
-        if (checkingAccountRepository.existsById(id) && userAccount.getAccountIds().contains(id)) {
 
-            CheckingAccount account = checkingAccountRepository.findById(id)
-                    .get();
+        } else if (checkingAccountRepository.existsById(id)) {
 
-            account.setDeleted(true);
+            userAccount.getAccountIds()
+                    .forEach(account -> {
+                        if (account.getId().equals(id)) {
 
-            userAccount.getAccountIds().remove(id);
+                            account.setDeleted(true);
+                            userAccount.getAccountIds().remove(account);
 
-            deleted = account.isDeleted();
-        }
+                            if (!account.isDeleted())
+                                throw new AccountActionFailedException("Account action failed: Account maybe deleted or operation failed");
+                        }
 
-        if (deleted) {
-
-            this.userJPARepository.save(userAccount);
-            return Response.builder()
-                    .responseCode("200")
-                    .message("Account deleted successfully")
-                    .build();
+                    });
         } else {
-            return Response.builder()
-                    .responseCode("404")
-                    .message("Account not found account not deleted ")
-                    .build();
+            throw new AccountNotFoundException("Account not found");
         }
+        this.userJPARepository.save(userAccount);
+        return Response.builder()
+                .responseCode("200")
+                .message("Account deleted successfully")
+                .build();
 
 
     }
