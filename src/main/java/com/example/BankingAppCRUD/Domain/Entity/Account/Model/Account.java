@@ -48,7 +48,7 @@ public abstract class Account {
 
 
     @OneToMany(cascade = CascadeType.ALL ,fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "transactions_id" , columnDefinition = "uuid")
     protected List<FundTransaction> account_transactions;
 
     @Embedded

@@ -6,6 +6,7 @@ import com.example.BankingAppCRUD.Application.DTOs.Requests.User.UserDTO;
 import com.example.BankingAppCRUD.Application.Exceptions.AccountActionFailedException;
 import com.example.BankingAppCRUD.Application.Exceptions.AccountNotActiveException;
 import com.example.BankingAppCRUD.Application.Exceptions.AccountNotFoundException;
+import com.example.BankingAppCRUD.Application.Exceptions.UserActionFailedException;
 import com.example.BankingAppCRUD.Application.Mappers.AccountMapper;
 import com.example.BankingAppCRUD.Application.Mappers.UserMapper;
 import com.example.BankingAppCRUD.Application.Response.Response;
@@ -232,11 +233,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response changeEmail(String value, UUID id) {
 
-        return userJPARepository.findById(id).map(account -> {
+        return userJPARepository.findById(id).map(userAccount -> {
 
-            account.setUser_email(value);
+            userAccount.setUser_email(value);
+            userJPARepository.save(userAccount);
             return Response.builder().responseCode("200").message("Success email changed").build();
-        }).orElse(Response.builder().responseCode("400").message("Error is changing email").build());
+        }).orElseThrow(() -> new UserActionFailedException("Error in changing email"));
 
 
     }
@@ -244,10 +246,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Response changeAddress(String value, UUID id) {
-        return userJPARepository.findById(id).map(account -> {
-            account.setUser_address(value);
+        return userJPARepository.findById(id).map(userAccount -> {
+
+
+            userAccount.setUser_address(value);
+            userJPARepository.save(userAccount);
             return Response.builder().responseCode("200").message("Success address changed").build();
-        }).orElse(Response.builder().responseCode("500").message("Error in changing address").build());
+        }).orElseThrow(() -> new UserActionFailedException("Error in changing address"));
     }
 
 
@@ -264,12 +269,12 @@ public class UserServiceImpl implements UserService {
 
         Name newName = Name.builder().first(firstName).last(lastName).build();
 
-        return userJPARepository.findById(id).map(user -> {
-            user.setUser_name(newName);
-
+        return userJPARepository.findById(id).map(userAccount -> {
+            userAccount.setUser_name(newName);
+            userJPARepository.save(userAccount);
             return Response.builder().responseCode("200").message("Success name changed completed").build();
 
-        }).orElse(Response.builder().responseCode("500").message("Error in changing name of user please recheck user details").build());
+        }).orElseThrow(() -> new UserActionFailedException("Error in changing user name"));
 
 
     }
